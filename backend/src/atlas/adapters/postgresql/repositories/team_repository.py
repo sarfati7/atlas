@@ -6,6 +6,10 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from atlas.adapters.postgresql.converters import (
+    team_entity_to_model,
+    team_model_to_entity,
+)
 from atlas.adapters.postgresql.models import TeamModel, UserTeamLink
 from atlas.domain.entities.team import Team
 from atlas.domain.interfaces.team_repository import AbstractTeamRepository
@@ -18,38 +22,19 @@ class PostgresTeamRepository(AbstractTeamRepository):
         """Initialize with async database session."""
         self._session = session
 
-    def _model_to_entity(self, model: TeamModel) -> Team:
-        """Convert SQLModel to domain entity."""
-        return Team(
-            id=model.id,
-            name=model.name,
-            member_ids=[member.id for member in model.members] if model.members else [],
-            created_at=model.created_at,
-            updated_at=model.updated_at,
-        )
-
-    def _entity_to_model(self, entity: Team) -> TeamModel:
-        """Convert domain entity to SQLModel."""
-        return TeamModel(
-            id=entity.id,
-            name=entity.name,
-            created_at=entity.created_at,
-            updated_at=entity.updated_at,
-        )
-
     async def get_by_id(self, team_id: UUID) -> Optional[Team]:
         """Retrieve a team by its unique identifier."""
         statement = select(TeamModel).where(TeamModel.id == team_id)
         result = await self._session.execute(statement)
         model = result.scalar_one_or_none()
-        return self._model_to_entity(model) if model else None
+        return team_model_to_entity(model) if model else None
 
     async def get_by_name(self, name: str) -> Optional[Team]:
         """Retrieve a team by its name."""
         statement = select(TeamModel).where(TeamModel.name == name)
         result = await self._session.execute(statement)
         model = result.scalar_one_or_none()
-        return self._model_to_entity(model) if model else None
+        return team_model_to_entity(model) if model else None
 
     async def save(self, team: Team) -> Team:
         """Save a team (create or update)."""
@@ -59,7 +44,7 @@ class PostgresTeamRepository(AbstractTeamRepository):
             existing.updated_at = team.updated_at
             self._session.add(existing)
         else:
-            model = self._entity_to_model(team)
+            model = team_entity_to_model(team)
             self._session.add(model)
         await self._session.commit()
 
@@ -67,7 +52,7 @@ class PostgresTeamRepository(AbstractTeamRepository):
         statement = select(TeamModel).where(TeamModel.id == team.id)
         result = await self._session.execute(statement)
         saved_model = result.scalar_one()
-        return self._model_to_entity(saved_model)
+        return team_model_to_entity(saved_model)
 
     async def delete(self, team_id: UUID) -> bool:
         """Delete a team by its ID."""
@@ -83,7 +68,7 @@ class PostgresTeamRepository(AbstractTeamRepository):
         statement = select(TeamModel)
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [team_model_to_entity(m) for m in models]
 
     async def get_user_teams(self, user_id: UUID) -> list[Team]:
         """Retrieve all teams that a user belongs to."""
@@ -94,7 +79,7 @@ class PostgresTeamRepository(AbstractTeamRepository):
         )
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [team_model_to_entity(m) for m in models]
 
     async def exists(self, team_id: UUID) -> bool:
         """Check if a team exists by its ID."""

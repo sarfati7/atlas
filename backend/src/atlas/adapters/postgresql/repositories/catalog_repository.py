@@ -7,6 +7,10 @@ from uuid import UUID
 from sqlalchemy import or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from atlas.adapters.postgresql.converters import (
+    catalog_item_entity_to_model,
+    catalog_item_model_to_entity,
+)
 from atlas.adapters.postgresql.models import CatalogItemModel
 from atlas.domain.entities.catalog_item import CatalogItem, CatalogItemType
 from atlas.domain.interfaces.catalog_repository import AbstractCatalogRepository
@@ -19,52 +23,19 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         """Initialize with async database session."""
         self._session = session
 
-    def _model_to_entity(self, model: CatalogItemModel) -> CatalogItem:
-        """Convert SQLModel to domain entity."""
-        tags = json.loads(model.tags) if model.tags else []
-        return CatalogItem(
-            id=model.id,
-            type=model.type,
-            name=model.name,
-            description=model.description,
-            git_path=model.git_path,
-            author_id=model.author_id,
-            team_id=model.team_id,
-            tags=tags,
-            usage_count=model.usage_count,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
-        )
-
-    def _entity_to_model(self, entity: CatalogItem) -> CatalogItemModel:
-        """Convert domain entity to SQLModel."""
-        return CatalogItemModel(
-            id=entity.id,
-            type=entity.type,
-            name=entity.name,
-            description=entity.description,
-            git_path=entity.git_path,
-            author_id=entity.author_id,
-            team_id=entity.team_id,
-            tags=json.dumps(entity.tags),
-            usage_count=entity.usage_count,
-            created_at=entity.created_at,
-            updated_at=entity.updated_at,
-        )
-
     async def get_by_id(self, item_id: UUID) -> Optional[CatalogItem]:
         """Retrieve a catalog item by its unique identifier."""
         statement = select(CatalogItemModel).where(CatalogItemModel.id == item_id)
         result = await self._session.execute(statement)
         model = result.scalar_one_or_none()
-        return self._model_to_entity(model) if model else None
+        return catalog_item_model_to_entity(model) if model else None
 
     async def get_by_git_path(self, git_path: str) -> Optional[CatalogItem]:
         """Retrieve a catalog item by its git file path."""
         statement = select(CatalogItemModel).where(CatalogItemModel.git_path == git_path)
         result = await self._session.execute(statement)
         model = result.scalar_one_or_none()
-        return self._model_to_entity(model) if model else None
+        return catalog_item_model_to_entity(model) if model else None
 
     async def save(self, item: CatalogItem) -> CatalogItem:
         """Save a catalog item (create or update)."""
@@ -81,7 +52,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
             existing.updated_at = item.updated_at
             self._session.add(existing)
         else:
-            model = self._entity_to_model(item)
+            model = catalog_item_entity_to_model(item)
             self._session.add(model)
         await self._session.commit()
 
@@ -89,7 +60,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         statement = select(CatalogItemModel).where(CatalogItemModel.id == item.id)
         result = await self._session.execute(statement)
         saved_model = result.scalar_one()
-        return self._model_to_entity(saved_model)
+        return catalog_item_model_to_entity(saved_model)
 
     async def delete(self, item_id: UUID) -> bool:
         """Delete a catalog item by its ID."""
@@ -105,14 +76,14 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         statement = select(CatalogItemModel).where(CatalogItemModel.type == item_type)
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def list_all(self) -> list[CatalogItem]:
         """Retrieve all catalog items."""
         statement = select(CatalogItemModel)
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def search(self, query: str) -> list[CatalogItem]:
         """Search catalog items by name, description, or tags."""
@@ -126,7 +97,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         )
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def list_by_author(self, author_id: UUID) -> list[CatalogItem]:
         """Retrieve all catalog items created by a specific user."""
@@ -135,7 +106,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         )
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def list_by_team(self, team_id: UUID) -> list[CatalogItem]:
         """Retrieve all catalog items belonging to a specific team."""
@@ -144,7 +115,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         )
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def list_by_tag(self, tag: str) -> list[CatalogItem]:
         """Retrieve all catalog items with a specific tag."""
@@ -155,7 +126,7 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         )
         result = await self._session.execute(statement)
         models = result.scalars().all()
-        return [self._model_to_entity(m) for m in models]
+        return [catalog_item_model_to_entity(m) for m in models]
 
     async def exists(self, item_id: UUID) -> bool:
         """Check if a catalog item exists by its ID."""
