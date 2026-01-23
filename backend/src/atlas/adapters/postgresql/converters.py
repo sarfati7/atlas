@@ -16,6 +16,7 @@ def user_model_to_entity(model: UserModel) -> User:
         id=model.id,
         email=model.email,
         username=model.username,
+        password_hash=model.password_hash if model.password_hash else None,
         team_ids=[team.id for team in model.teams] if model.teams else [],
         created_at=model.created_at,
         updated_at=model.updated_at,
@@ -28,7 +29,7 @@ def user_entity_to_model(entity: User) -> UserModel:
         id=entity.id,
         email=entity.email,
         username=entity.username,
-        password_hash="",  # Set separately during auth
+        password_hash=entity.password_hash or "",
         created_at=entity.created_at,
         updated_at=entity.updated_at,
     )

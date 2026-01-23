@@ -50,6 +50,8 @@ class PostgresUserRepository(AbstractUserRepository):
             existing.email = user.email
             existing.username = user.username
             existing.updated_at = user.updated_at
+            if user.password_hash:
+                existing.password_hash = user.password_hash
             self._session.add(existing)
         else:
             model = user_entity_to_model(user)

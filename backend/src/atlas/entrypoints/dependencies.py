@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import Depends
 
+from atlas.adapters.auth.jwt_auth_service import JWTAuthService
 from atlas.adapters.authorization.permissive import PermissiveAuthorizationService
 from atlas.adapters.github.content_repository import GitHubContentRepository
 from atlas.adapters.postgresql.repositories import (
@@ -16,6 +17,7 @@ from atlas.adapters.postgresql.session import AsyncSession, get_session
 from atlas.adapters.sync import GitCatalogSyncService
 from atlas.config import settings
 from atlas.domain.interfaces import (
+    AbstractAuthService,
     AbstractAuthorizationService,
     AbstractCatalogRepository,
     AbstractContentRepository,
@@ -94,10 +96,26 @@ async def get_sync_service(
     return GitCatalogSyncService(content_repo, catalog_repo, SYSTEM_AUTHOR_ID)
 
 
+# Authentication service (JWT + password hashing)
+
+def get_auth_service() -> AbstractAuthService:
+    """
+    Provide authentication service implementation.
+
+    Returns JWTAuthService configured with application settings.
+    """
+    return JWTAuthService(
+        secret_key=settings.secret_key,
+        access_token_expire_minutes=settings.access_token_expire_minutes,
+        refresh_token_expire_days=settings.refresh_token_expire_days,
+    )
+
+
 # Type aliases for cleaner route signatures
 UserRepo = Annotated[AbstractUserRepository, Depends(get_user_repository)]
 TeamRepo = Annotated[AbstractTeamRepository, Depends(get_team_repository)]
 CatalogRepo = Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)]
 ContentRepo = Annotated[AbstractContentRepository, Depends(get_content_repository)]
 AuthService = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
+AuthenticationService = Annotated[AbstractAuthService, Depends(get_auth_service)]
 SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
