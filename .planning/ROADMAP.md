@@ -70,13 +70,11 @@ Plans:
   4. API supports keyword search across catalog items
   5. API supports filtering by type (skill/MCP/tool)
   6. Each catalog item includes documentation (description, usage examples)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Skill, MCP, Tool data models and repository layer
-- [ ] 03-02: REST API endpoints for catalog browsing
-- [ ] 03-03: Search and filtering implementation
-- [ ] 03-04: Documentation content retrieval from git
+- [ ] 03-01-PLAN.md — Repository pagination + catalog list endpoint with search/filter
+- [ ] 03-02-PLAN.md — Catalog detail endpoint with documentation retrieval from git
 
 ### Phase 4: Configuration Backend
 **Goal**: Backend APIs support profile editing with git-backed versioning and rollback
@@ -198,7 +196,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 |-------|----------------|--------|-----------|
 | 1. Foundation & Data Architecture | 5/5 | Complete | 2026-01-23 |
 | 2. Authentication | 3/3 | Complete | 2026-01-23 |
-| 3. Catalog Backend | 0/4 | Not started | - |
+| 3. Catalog Backend | 0/2 | Planned | - |
 | 4. Configuration Backend | 0/4 | Not started | - |
 | 5. User Profiles Backend | 0/3 | Not started | - |
 | 6. Web Frontend Core | 0/5 | Not started | - |
@@ -208,5 +206,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 ---
 *Roadmap created: 2025-01-23*
-*Total plans: 39*
+*Total plans: 37*
 *Total requirements: 32*
