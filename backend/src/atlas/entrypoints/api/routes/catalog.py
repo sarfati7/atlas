@@ -1,14 +1,15 @@
 """Catalog routes - Browse skills, MCPs, and tools."""
 
 import math
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel
 
 from atlas.domain.entities.catalog_item import CatalogItemType
-from atlas.entrypoints.dependencies import CatalogRepo
+from atlas.entrypoints.dependencies import CatalogRepo, ContentRepo
 
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
@@ -34,6 +35,36 @@ class PaginatedCatalog(BaseModel):
     page: int
     size: int
     pages: int
+
+
+class CatalogItemDetail(BaseModel):
+    """Detail view with full documentation from git."""
+
+    id: UUID
+    type: CatalogItemType
+    name: str
+    description: str
+    git_path: str
+    tags: list[str]
+    author_id: UUID
+    team_id: Optional[UUID]
+    usage_count: int
+    created_at: datetime
+    updated_at: datetime
+    documentation: str  # README content from git
+
+
+def _get_readme_path(git_path: str) -> str:
+    """
+    Derive README path from item's git path.
+
+    Convention: If item is at skills/my-skill/config.yaml,
+    look for skills/my-skill/README.md
+    """
+    if "/" in git_path:
+        directory = git_path.rsplit("/", 1)[0]
+        return f"{directory}/README.md"
+    return "README.md"
 
 
 @router.get("", response_model=PaginatedCatalog)
@@ -85,4 +116,54 @@ async def list_catalog(
         page=page,
         size=size,
         pages=pages,
+    )
+
+
+@router.get("/{item_id}", response_model=CatalogItemDetail)
+async def get_catalog_item(
+    item_id: UUID,
+    catalog_repo: CatalogRepo,
+    content_repo: ContentRepo,
+) -> CatalogItemDetail:
+    """
+    Get catalog item details including full documentation.
+
+    Documentation is fetched from the git repository (README.md in item's directory).
+    Returns 404 if item does not exist.
+
+    - **item_id**: UUID of the catalog item
+    """
+    # Get metadata from database
+    item = await catalog_repo.get_by_id(item_id)
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Catalog item not found",
+        )
+
+    # Attempt to fetch documentation from git
+    readme_path = _get_readme_path(item.git_path)
+    documentation = ""
+    try:
+        content = await content_repo.get_content(readme_path)
+        if content is not None:
+            documentation = content
+    except Exception:
+        # Log error but don't fail - documentation is optional
+        # Item metadata is still valuable without docs
+        pass
+
+    return CatalogItemDetail(
+        id=item.id,
+        type=item.type,
+        name=item.name,
+        description=item.description,
+        git_path=item.git_path,
+        tags=item.tags,
+        author_id=item.author_id,
+        team_id=item.team_id,
+        usage_count=item.usage_count,
+        created_at=item.created_at,
+        updated_at=item.updated_at,
+        documentation=documentation,
     )
