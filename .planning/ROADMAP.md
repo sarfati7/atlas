@@ -52,12 +52,12 @@ Plans:
   2. User can log in and stay logged in across browser sessions (JWT/session persistence)
   3. User can log out from any page in the application
   4. User can reset forgotten password via email link
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: User registration and password hashing
-- [ ] 02-02: Login, session management, and logout
-- [ ] 02-03: Password reset flow with email
+- [ ] 02-01-PLAN.md — Auth dependencies, domain layer (interfaces, value objects), JWT service, registration endpoint
+- [ ] 02-02-PLAN.md — Login, session management (access/refresh tokens), logout, /me endpoint
+- [ ] 02-03-PLAN.md — Password reset flow with email service (forgot-password, reset-password)
 
 ### Phase 3: Catalog Backend
 **Goal**: Backend APIs serve complete skill/MCP/tool catalog with search and filtering
@@ -197,7 +197,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Data Architecture | 0/5 | Planned | - |
-| 2. Authentication | 0/3 | Not started | - |
+| 2. Authentication | 0/3 | Planned | - |
 | 3. Catalog Backend | 0/4 | Not started | - |
 | 4. Configuration Backend | 0/4 | Not started | - |
 | 5. User Profiles Backend | 0/3 | Not started | - |
