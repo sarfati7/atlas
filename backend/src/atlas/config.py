@@ -36,6 +36,13 @@ class Settings(BaseSettings):
     # Frontend URL (for password reset links)
     frontend_url: str = "http://localhost:3000"
 
+    # Email settings (optional - uses console output if not configured)
+    smtp_host: Optional[str] = None
+    smtp_port: int = 587
+    smtp_user: Optional[str] = None
+    smtp_password: Optional[str] = None
+    email_from: str = "noreply@atlas.local"
+
     # Debug mode
     debug: bool = False
 
