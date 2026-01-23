@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     # GitHub integration
     github_token: Optional[str] = None
     github_repo: Optional[str] = None
+    github_webhook_secret: Optional[str] = None
 
     # Debug mode
     debug: bool = False
