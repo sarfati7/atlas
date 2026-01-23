@@ -18,6 +18,7 @@ class User(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     email: str
     username: str
+    password_hash: Optional[str] = None
     team_ids: list[UUID] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
