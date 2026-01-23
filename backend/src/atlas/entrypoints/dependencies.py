@@ -23,6 +23,7 @@ from atlas.domain.interfaces import (
     AbstractAuthorizationService,
     AbstractCatalogRepository,
     AbstractContentRepository,
+    AbstractEmailService,
     AbstractSyncService,
     AbstractTeamRepository,
     AbstractUserRepository,
@@ -99,6 +100,29 @@ async def get_sync_service(
     Uses system author ID for items created via webhook or automated sync.
     """
     return GitCatalogSyncService(content_repo, catalog_repo, SYSTEM_AUTHOR_ID)
+
+
+# Email service (conditional on config)
+
+async def get_email_service() -> AbstractEmailService:
+    """
+    Provide email service implementation.
+
+    Returns SMTPEmailService if SMTP settings are configured,
+    otherwise falls back to ConsoleEmailService for development.
+    """
+    if settings.smtp_host:
+        from atlas.adapters.email.smtp_email_service import SMTPEmailService
+        return SMTPEmailService(
+            smtp_host=settings.smtp_host,
+            smtp_port=settings.smtp_port,
+            smtp_user=settings.smtp_user,
+            smtp_password=settings.smtp_password,
+            email_from=settings.email_from,
+        )
+    # Fallback to console for development without SMTP config
+    from atlas.adapters.email.console_email_service import ConsoleEmailService
+    return ConsoleEmailService()
 
 
 # Authentication service (JWT + password hashing)
@@ -203,6 +227,7 @@ CatalogRepo = Annotated[AbstractCatalogRepository, Depends(get_catalog_repositor
 ContentRepo = Annotated[AbstractContentRepository, Depends(get_content_repository)]
 AuthorizationSvc = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
 AuthenticationSvc = Annotated[AbstractAuthService, Depends(get_auth_service)]
+EmailSvc = Annotated[AbstractEmailService, Depends(get_email_service)]
 SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
 
 # Current user type aliases
