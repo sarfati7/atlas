@@ -1,9 +1,10 @@
 """FastAPI dependency injection setup."""
 
-from typing import Annotated
+from typing import Annotated, Optional
 from uuid import UUID
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 from atlas.adapters.auth.jwt_auth_service import JWTAuthService
 from atlas.adapters.authorization.permissive import PermissiveAuthorizationService
@@ -16,6 +17,7 @@ from atlas.adapters.postgresql.repositories import (
 from atlas.adapters.postgresql.session import AsyncSession, get_session
 from atlas.adapters.sync import GitCatalogSyncService
 from atlas.config import settings
+from atlas.domain.entities.user import User
 from atlas.domain.interfaces import (
     AbstractAuthService,
     AbstractAuthorizationService,
@@ -25,6 +27,9 @@ from atlas.domain.interfaces import (
     AbstractTeamRepository,
     AbstractUserRepository,
 )
+
+# OAuth2 scheme for Bearer token authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 # Repository dependencies
@@ -111,11 +116,98 @@ def get_auth_service() -> AbstractAuthService:
     )
 
 
+# Current user dependencies
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
+    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+) -> User:
+    """
+    Get the current authenticated user from JWT token.
+
+    Validates the Bearer token and returns the associated User entity.
+
+    Raises:
+        HTTPException 401: If token is invalid, expired, or user not found
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    # Verify token and extract payload
+    payload = auth_service.verify_token(token)
+    if payload is None:
+        raise credentials_exception
+
+    # Extract user ID from token subject
+    user_id_str = payload.get("sub")
+    if user_id_str is None:
+        raise credentials_exception
+
+    try:
+        user_id = UUID(user_id_str)
+    except ValueError:
+        raise credentials_exception
+
+    # Fetch user from repository
+    user = await user_repo.get_by_id(user_id)
+    if user is None:
+        raise credentials_exception
+
+    return user
+
+
+async def get_current_user_optional(
+    token: Annotated[Optional[str], Depends(OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False))],
+    auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
+    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+) -> Optional[User]:
+    """
+    Get the current authenticated user if a valid token is provided.
+
+    Unlike get_current_user, this returns None instead of raising 401
+    when no token is provided or the token is invalid.
+
+    Useful for routes that work both with and without authentication.
+    """
+    if token is None:
+        return None
+
+    # Verify token and extract payload
+    payload = auth_service.verify_token(token)
+    if payload is None:
+        return None
+
+    # Extract user ID from token subject
+    user_id_str = payload.get("sub")
+    if user_id_str is None:
+        return None
+
+    try:
+        user_id = UUID(user_id_str)
+    except ValueError:
+        return None
+
+    # Fetch user from repository
+    user = await user_repo.get_by_id(user_id)
+    return user
+
+
 # Type aliases for cleaner route signatures
 UserRepo = Annotated[AbstractUserRepository, Depends(get_user_repository)]
 TeamRepo = Annotated[AbstractTeamRepository, Depends(get_team_repository)]
 CatalogRepo = Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)]
 ContentRepo = Annotated[AbstractContentRepository, Depends(get_content_repository)]
-AuthService = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
-AuthenticationService = Annotated[AbstractAuthService, Depends(get_auth_service)]
+AuthorizationSvc = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
+AuthenticationSvc = Annotated[AbstractAuthService, Depends(get_auth_service)]
 SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
+
+# Current user type aliases
+CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentUserOptional = Annotated[Optional[User], Depends(get_current_user_optional)]
+
+# Backwards compatibility - AuthService was previously used for authorization
+AuthService = AuthorizationSvc
