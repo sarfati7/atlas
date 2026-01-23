@@ -6,7 +6,12 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-from atlas.entrypoints.api.routes import auth_router, sync_router, webhooks_router
+from atlas.entrypoints.api.routes import (
+    auth_router,
+    catalog_router,
+    sync_router,
+    webhooks_router,
+)
 
 
 def create_app() -> FastAPI:
@@ -29,6 +34,7 @@ def create_app() -> FastAPI:
 
     # Include routers with /api/v1 prefix
     app.include_router(auth_router, prefix="/api/v1")
+    app.include_router(catalog_router, prefix="/api/v1")
     app.include_router(sync_router, prefix="/api/v1")
     app.include_router(webhooks_router, prefix="/api/v1")
 
