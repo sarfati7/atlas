@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2025-01-23)
 ## Current Position
 
 Phase: 3 of 9 (Catalog Backend)
-Plan: 1 of 2 in current phase
+Plan: 2 of 2 in current phase
 Status: In progress
-Last activity: 2026-01-23 - Completed 03-01-PLAN.md (Catalog List Endpoint)
+Last activity: 2026-01-24 - Completed 03-02-PLAN.md (Catalog Detail Endpoint)
 
-Progress: [====......] 24%
+Progress: [=====.....] 26%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 3.8 min
-- Total execution time: 0.57 hours
+- Total execution time: 0.63 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [====......] 24%
 |-------|-------|-------|----------|
 | 1 | 5 | 18 min | 3.6 min |
 | 2 | 3 | 12 min | 4.0 min |
-| 3 | 1 | 4 min | 4.0 min |
+| 3 | 2 | 8 min | 4.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-05 (4 min), 02-01 (4 min), 02-02 (3 min), 02-03 (5 min), 03-01 (4 min)
+- Last 5 plans: 01-05 (4 min), 02-01 (4 min), 02-02 (3 min), 02-03 (5 min), 03-02 (4 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -75,6 +75,8 @@ Recent decisions affecting current work:
 - [03-01]: Page-based pagination (1-indexed) vs cursor-based for simplicity
 - [03-01]: Max page size 100 enforced at API level via Query validation
 - [03-01]: Search uses ILIKE on name, description, tags (case-insensitive)
+- [03-02]: Documentation is optional - missing README returns empty string, not error
+- [03-02]: README path derived from git_path directory (skills/foo/config.yaml -> skills/foo/README.md)
 
 ### Pending Todos
 
@@ -103,9 +105,19 @@ All 4 success criteria from ROADMAP.md are met:
 3. User can log out from any page (02-02)
 4. User can reset password via email (02-03)
 
+## Phase 3 Progress
+
+Plans completed:
+1. 03-01: Catalog list endpoint with pagination and search
+2. 03-02: Catalog detail endpoint with documentation retrieval
+
+Catalog API endpoints now available:
+- GET /api/v1/catalog - paginated list with type filter and search
+- GET /api/v1/catalog/{item_id} - detail with README documentation
+
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: Completed 03-01-PLAN.md (Catalog List Endpoint)
+Last session: 2026-01-24
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
-Next: 03-02-PLAN.md (Catalog Detail Endpoint)
+Next: Phase 3 verification or Phase 4
