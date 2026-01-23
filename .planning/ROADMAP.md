@@ -12,8 +12,8 @@ Atlas delivers an agent management platform enabling developers to discover comp
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Data Architecture** - PostgreSQL schema, Git integration, RBAC abstractions
-- [ ] **Phase 2: Authentication** - User accounts, sessions, password management
+- [x] **Phase 1: Foundation & Data Architecture** - PostgreSQL schema, Git integration, RBAC abstractions
+- [x] **Phase 2: Authentication** - User accounts, sessions, password management
 - [ ] **Phase 3: Catalog Backend** - Skills/MCPs/tools API with search and filtering
 - [ ] **Phase 4: Configuration Backend** - Profile editing API with git-backed versioning
 - [ ] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
@@ -37,11 +37,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project setup and domain layer (entities, interfaces)
-- [ ] 01-02-PLAN.md — PostgreSQL SQLModel models and Alembic migrations
-- [ ] 01-03-PLAN.md — Repository implementations (PostgreSQL + in-memory)
-- [ ] 01-04-PLAN.md — GitHub content integration and authorization abstraction
-- [ ] 01-05-PLAN.md — Git-to-database sync mechanism (webhooks + manual sync)
+- [x] 01-01-PLAN.md — Project setup and domain layer (entities, interfaces)
+- [x] 01-02-PLAN.md — PostgreSQL SQLModel models and Alembic migrations
+- [x] 01-03-PLAN.md — Repository implementations (PostgreSQL + in-memory)
+- [x] 01-04-PLAN.md — GitHub content integration and authorization abstraction
+- [x] 01-05-PLAN.md — Git-to-database sync mechanism (webhooks + manual sync)
 
 ### Phase 2: Authentication
 **Goal**: Users can securely create accounts and manage their sessions
@@ -55,9 +55,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Auth dependencies, domain layer (interfaces, value objects), JWT service, registration endpoint
-- [ ] 02-02-PLAN.md — Login, session management (access/refresh tokens), logout, /me endpoint
-- [ ] 02-03-PLAN.md — Password reset flow with email service (forgot-password, reset-password)
+- [x] 02-01-PLAN.md — Auth dependencies, domain layer (interfaces, value objects), JWT service, registration endpoint
+- [x] 02-02-PLAN.md — Login, session management (access/refresh tokens), logout, /me endpoint
+- [x] 02-03-PLAN.md — Password reset flow with email service (forgot-password, reset-password)
 
 ### Phase 3: Catalog Backend
 **Goal**: Backend APIs serve complete skill/MCP/tool catalog with search and filtering
@@ -196,8 +196,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Data Architecture | 0/5 | Planned | - |
-| 2. Authentication | 0/3 | Planned | - |
+| 1. Foundation & Data Architecture | 5/5 | Complete | 2026-01-23 |
+| 2. Authentication | 3/3 | Complete | 2026-01-23 |
 | 3. Catalog Backend | 0/4 | Not started | - |
 | 4. Configuration Backend | 0/4 | Not started | - |
 | 5. User Profiles Backend | 0/3 | Not started | - |

@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can create account with email and password
-- [ ] **AUTH-02**: User can log in and stay logged in across sessions
-- [ ] **AUTH-03**: User can log out from any page
-- [ ] **AUTH-04**: User can reset password via email
+- [x] **AUTH-01**: User can create account with email and password
+- [x] **AUTH-02**: User can log in and stay logged in across sessions
+- [x] **AUTH-03**: User can log out from any page
+- [x] **AUTH-04**: User can reset password via email
 
 ### User Profiles
 
@@ -59,9 +59,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFR-01**: MCP server backend for frontend communication
-- [ ] **INFR-02**: PostgreSQL database for metadata and user data
-- [ ] **INFR-03**: Git repository integration for file storage
+- [x] **INFR-01**: MCP server backend for frontend communication
+- [x] **INFR-02**: PostgreSQL database for metadata and user data
+- [x] **INFR-03**: Git repository integration for file storage
 
 ## v2 Requirements
 
@@ -107,10 +107,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
+| AUTH-04 | Phase 2 | Complete |
 | PROF-01 | Phase 5 | Pending |
 | PROF-02 | Phase 5 | Pending |
 | PROF-03 | Phase 5 | Pending |
@@ -136,9 +136,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMN-02 | Phase 9 | Pending |
 | ADMN-03 | Phase 9 | Pending |
 | ADMN-04 | Phase 9 | Pending |
-| INFR-01 | Phase 1 | Pending |
-| INFR-02 | Phase 1 | Pending |
-| INFR-03 | Phase 1 | Pending |
+| INFR-01 | Phase 1 | Complete |
+| INFR-02 | Phase 1 | Complete |
+| INFR-03 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 32 total
