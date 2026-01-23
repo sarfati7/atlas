@@ -4,7 +4,10 @@ from typing import Optional
 from uuid import UUID
 
 from atlas.domain.entities.catalog_item import CatalogItem, CatalogItemType
-from atlas.domain.interfaces.catalog_repository import AbstractCatalogRepository
+from atlas.domain.interfaces.catalog_repository import (
+    AbstractCatalogRepository,
+    PaginatedResult,
+)
 
 
 class InMemoryCatalogRepository(AbstractCatalogRepository):
@@ -78,3 +81,40 @@ class InMemoryCatalogRepository(AbstractCatalogRepository):
     async def exists(self, item_id: UUID) -> bool:
         """Check if a catalog item exists by its ID."""
         return item_id in self._items
+
+    async def list_paginated(
+        self,
+        offset: int,
+        limit: int,
+        item_type: Optional[CatalogItemType] = None,
+        search_query: Optional[str] = None,
+    ) -> PaginatedResult:
+        """Retrieve paginated catalog items with optional filtering."""
+        # Start with all items
+        items = list(self._items.values())
+
+        # Filter by type if provided
+        if item_type is not None:
+            items = [item for item in items if item.type == item_type]
+
+        # Filter by search query if provided
+        if search_query:
+            query_lower = search_query.lower()
+            items = [
+                item
+                for item in items
+                if query_lower in item.name.lower()
+                or query_lower in item.description.lower()
+                or any(query_lower in tag.lower() for tag in item.tags)
+            ]
+
+        # Sort by name
+        items.sort(key=lambda x: x.name.lower())
+
+        # Get total count before pagination
+        total = len(items)
+
+        # Apply pagination
+        paginated_items = items[offset : offset + limit]
+
+        return PaginatedResult(items=paginated_items, total=total)

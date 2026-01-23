@@ -1,10 +1,19 @@
 """Catalog repository interface - Abstract contract for catalog item data access."""
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
 from atlas.domain.entities.catalog_item import CatalogItem, CatalogItemType
+
+
+@dataclass
+class PaginatedResult:
+    """Container for paginated query results."""
+
+    items: list[CatalogItem]
+    total: int
 
 
 class AbstractCatalogRepository(ABC):
@@ -80,4 +89,26 @@ class AbstractCatalogRepository(ABC):
     @abstractmethod
     async def exists(self, item_id: UUID) -> bool:
         """Check if a catalog item exists by its ID."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def list_paginated(
+        self,
+        offset: int,
+        limit: int,
+        item_type: Optional[CatalogItemType] = None,
+        search_query: Optional[str] = None,
+    ) -> PaginatedResult:
+        """
+        Retrieve paginated catalog items with optional filtering.
+
+        Args:
+            offset: Number of items to skip
+            limit: Maximum items to return
+            item_type: Filter by item type (SKILL, MCP, TOOL)
+            search_query: Search in name, description, tags (case-insensitive)
+
+        Returns:
+            PaginatedResult with items and total count
+        """
         raise NotImplementedError

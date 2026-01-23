@@ -4,7 +4,7 @@ import json
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from atlas.adapters.postgresql.converters import (
@@ -13,7 +13,10 @@ from atlas.adapters.postgresql.converters import (
 )
 from atlas.adapters.postgresql.models import CatalogItemModel
 from atlas.domain.entities.catalog_item import CatalogItem, CatalogItemType
-from atlas.domain.interfaces.catalog_repository import AbstractCatalogRepository
+from atlas.domain.interfaces.catalog_repository import (
+    AbstractCatalogRepository,
+    PaginatedResult,
+)
 
 
 class PostgresCatalogRepository(AbstractCatalogRepository):
@@ -133,3 +136,48 @@ class PostgresCatalogRepository(AbstractCatalogRepository):
         statement = select(CatalogItemModel.id).where(CatalogItemModel.id == item_id)
         result = await self._session.execute(statement)
         return result.scalar_one_or_none() is not None
+
+    async def list_paginated(
+        self,
+        offset: int,
+        limit: int,
+        item_type: Optional[CatalogItemType] = None,
+        search_query: Optional[str] = None,
+    ) -> PaginatedResult:
+        """Retrieve paginated catalog items with optional filtering."""
+        # Build base query conditions
+        conditions = []
+
+        if item_type is not None:
+            conditions.append(CatalogItemModel.type == item_type)
+
+        if search_query:
+            search_pattern = f"%{search_query}%"
+            conditions.append(
+                or_(
+                    CatalogItemModel.name.ilike(search_pattern),
+                    CatalogItemModel.description.ilike(search_pattern),
+                    CatalogItemModel.tags.ilike(search_pattern),
+                )
+            )
+
+        # Count query
+        count_stmt = select(func.count(CatalogItemModel.id))
+        if conditions:
+            count_stmt = count_stmt.where(*conditions)
+        count_result = await self._session.execute(count_stmt)
+        total = count_result.scalar_one()
+
+        # Select query with pagination
+        select_stmt = select(CatalogItemModel).order_by(CatalogItemModel.name)
+        if conditions:
+            select_stmt = select_stmt.where(*conditions)
+        select_stmt = select_stmt.offset(offset).limit(limit)
+
+        result = await self._session.execute(select_stmt)
+        models = result.scalars().all()
+
+        return PaginatedResult(
+            items=[catalog_item_model_to_entity(m) for m in models],
+            total=total,
+        )
