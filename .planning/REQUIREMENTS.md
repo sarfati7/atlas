@@ -18,7 +18,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **PROF-01**: User has personal dashboard showing their agent config
 - [ ] **PROF-02**: User can view their available skills, MCPs, and tools
-- [ ] **PROF-03**: User profile supports configuration inheritance (org → team → user)
+- [ ] **PROF-03**: User profile supports configuration inheritance (org -> team -> user)
 
 ### Catalog & Discovery
 
@@ -107,44 +107,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
-| AUTH-03 | TBD | Pending |
-| AUTH-04 | TBD | Pending |
-| PROF-01 | TBD | Pending |
-| PROF-02 | TBD | Pending |
-| PROF-03 | TBD | Pending |
-| CATL-01 | TBD | Pending |
-| CATL-02 | TBD | Pending |
-| CATL-03 | TBD | Pending |
-| CATL-04 | TBD | Pending |
-| CATL-05 | TBD | Pending |
-| CATL-06 | TBD | Pending |
-| CONF-01 | TBD | Pending |
-| CONF-02 | TBD | Pending |
-| CONF-03 | TBD | Pending |
-| CONF-04 | TBD | Pending |
-| CONF-05 | TBD | Pending |
-| SYNC-01 | TBD | Pending |
-| SYNC-02 | TBD | Pending |
-| SYNC-03 | TBD | Pending |
-| GOVR-01 | TBD | Pending |
-| GOVR-02 | TBD | Pending |
-| GOVR-03 | TBD | Pending |
-| GOVR-04 | TBD | Pending |
-| ADMN-01 | TBD | Pending |
-| ADMN-02 | TBD | Pending |
-| ADMN-03 | TBD | Pending |
-| ADMN-04 | TBD | Pending |
-| INFR-01 | TBD | Pending |
-| INFR-02 | TBD | Pending |
-| INFR-03 | TBD | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| PROF-01 | Phase 5 | Pending |
+| PROF-02 | Phase 5 | Pending |
+| PROF-03 | Phase 5 | Pending |
+| CATL-01 | Phase 3 | Pending |
+| CATL-02 | Phase 3 | Pending |
+| CATL-03 | Phase 3 | Pending |
+| CATL-04 | Phase 3 | Pending |
+| CATL-05 | Phase 3 | Pending |
+| CATL-06 | Phase 3 | Pending |
+| CONF-01 | Phase 4 | Pending |
+| CONF-02 | Phase 4 | Pending |
+| CONF-03 | Phase 4 | Pending |
+| CONF-04 | Phase 4 | Pending |
+| CONF-05 | Phase 4 | Pending |
+| SYNC-01 | Phase 8 | Pending |
+| SYNC-02 | Phase 8 | Pending |
+| SYNC-03 | Phase 8 | Pending |
+| GOVR-01 | Phase 9 | Pending |
+| GOVR-02 | Phase 9 | Pending |
+| GOVR-03 | Phase 9 | Pending |
+| GOVR-04 | Phase 9 | Pending |
+| ADMN-01 | Phase 9 | Pending |
+| ADMN-02 | Phase 9 | Pending |
+| ADMN-03 | Phase 9 | Pending |
+| ADMN-04 | Phase 9 | Pending |
+| INFR-01 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Pending |
+| INFR-03 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-01-23*
-*Last updated: 2025-01-23 after initial definition*
+*Last updated: 2025-01-23 after roadmap creation*
