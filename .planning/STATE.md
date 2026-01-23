@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2025-01-23)
 ## Current Position
 
 Phase: 2 of 9 (Authentication)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-23 - Completed 02-02-PLAN.md (Login & Session Management)
+Last activity: 2026-01-23 - Completed 02-03-PLAN.md (Password Reset with Email)
 
-Progress: [=======...] 19%
+Progress: [========..] 22%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3.4 min
-- Total execution time: 0.40 hours
+- Total plans completed: 8
+- Average duration: 3.5 min
+- Total execution time: 0.47 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 5 | 18 min | 3.6 min |
-| 2 | 2 | 7 min | 3.5 min |
+| 2 | 3 | 12 min | 4.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (3 min), 01-04 (3 min), 01-05 (4 min), 02-01 (4 min), 02-02 (3 min)
+- Last 5 plans: 01-04 (3 min), 01-05 (4 min), 02-01 (4 min), 02-02 (3 min), 02-03 (5 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -67,6 +67,9 @@ Recent decisions affecting current work:
 - [02-02]: Generic error message for login failures (prevents email enumeration)
 - [02-02]: OAuth2PasswordBearer tokenUrl points to /api/v1/auth/login
 - [02-02]: CurrentUser type alias for clean protected route signatures
+- [02-03]: Same response for forgot-password whether email exists or not (prevents enumeration)
+- [02-03]: 30-minute token expiry via itsdangerous max_age_seconds
+- [02-03]: Console email service for dev (prints to stdout), SMTP for production
 
 ### Pending Todos
 
@@ -88,16 +91,16 @@ All 5 success criteria from ROADMAP.md are met:
 
 ## Phase 2 Progress
 
-2/4 success criteria met:
+3/4 success criteria met:
 
 1. User registration with password hashing (02-01) - COMPLETE
 2. Login with JWT access/refresh tokens (02-02) - COMPLETE
-3. Password reset with email (02-03) - PENDING
+3. Password reset with email (02-03) - COMPLETE
 4. Secure session management (02-04) - PENDING
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 02-02-PLAN.md (Login & Session Management)
+Stopped at: Completed 02-03-PLAN.md (Password Reset with Email)
 Resume file: None
-Next: 02-03-PLAN.md (Password Reset)
+Next: 02-04-PLAN.md (Secure Session Management)
