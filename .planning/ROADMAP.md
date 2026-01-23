@@ -34,13 +34,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Webhooks or sync mechanism keeps database metadata in sync with git content
   4. Authorization abstraction layer exists (functions like `can_view_skill(user, skill)` even if returning True)
   5. Schema versioning strategy is in place with Alembic migrations
-**Plans**: 4 plans
+**Plans**: 5 plans
 
 Plans:
 - [ ] 01-01-PLAN.md — Project setup and domain layer (entities, interfaces)
 - [ ] 01-02-PLAN.md — PostgreSQL SQLModel models and Alembic migrations
 - [ ] 01-03-PLAN.md — Repository implementations (PostgreSQL + in-memory)
 - [ ] 01-04-PLAN.md — GitHub content integration and authorization abstraction
+- [ ] 01-05-PLAN.md — Git-to-database sync mechanism (webhooks + manual sync)
 
 ### Phase 2: Authentication
 **Goal**: Users can securely create accounts and manage their sessions
@@ -195,7 +196,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Data Architecture | 0/4 | Planned | - |
+| 1. Foundation & Data Architecture | 0/5 | Planned | - |
 | 2. Authentication | 0/3 | Not started | - |
 | 3. Catalog Backend | 0/4 | Not started | - |
 | 4. Configuration Backend | 0/4 | Not started | - |
@@ -207,5 +208,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 ---
 *Roadmap created: 2025-01-23*
-*Total plans: 38*
+*Total plans: 39*
 *Total requirements: 32*
