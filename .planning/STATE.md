@@ -5,16 +5,38 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 5 Complete - User Profiles Backend
+**Current focus:** Phase 6 Ready - Web Frontend Core
 
 ## Current Position
 
-Phase: 5 of 9 (User Profiles Backend)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2025-01-24 - Completed 05-02-PLAN.md
+Phase: 6 of 9 (Web Frontend Core)
+Plan: 0 of 5 in current phase
+Status: Planned, ready for execution
+Last activity: 2026-01-24 - Phase 6 planning complete
 
 Progress: [========..] 44%
+
+## Phase 6 Handoff
+
+**What:** React web frontend for auth, catalog browsing, and dashboard
+**Tech stack:** Vite + React 18 + TypeScript + TanStack Query + shadcn/ui
+**Theme:** Dark-only, developer-focused (GitHub-like)
+
+**Plans ready to execute:**
+| Plan | Wave | What it builds |
+|------|------|----------------|
+| 06-01 | 1 | Project setup, API client, dark theme |
+| 06-02 | 2 | Auth pages (login, signup, password reset) |
+| 06-03 | 2 | Catalog browser with cards and filters |
+| 06-04 | 3 | Catalog detail page with documentation |
+| 06-05 | 2 | User dashboard |
+
+**To execute:** `/gsd:execute-phase 6`
+
+**Key docs:**
+- `.planning/phases/06-web-frontend-core/06-CONTEXT.md` — User decisions
+- `.planning/phases/06-web-frontend-core/06-RESEARCH.md` — Tech research
+- `.planning/phases/06-web-frontend-core/06-*-PLAN.md` — Executable plans
 
 ## Performance Metrics
 
@@ -172,7 +194,7 @@ Profile API endpoints:
 
 ## Session Continuity
 
-Last session: 2025-01-24
-Stopped at: Completed 05-02-PLAN.md (Profile API Routes)
+Last session: 2026-01-24
+Stopped at: Phase 6 planning complete (5 plans ready)
 Resume file: None
-Next: Phase 6 (CLI Sync)
+Next: Execute Phase 6 (Web Frontend Core) with `/gsd:execute-phase 6`
