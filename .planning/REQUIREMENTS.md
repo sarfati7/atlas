@@ -22,20 +22,20 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Catalog & Discovery
 
-- [ ] **CATL-01**: User can browse all skills available company-wide
-- [ ] **CATL-02**: User can browse all MCPs available company-wide
-- [ ] **CATL-03**: User can browse all tools available company-wide
-- [ ] **CATL-04**: User can search catalog by keyword
-- [ ] **CATL-05**: User can filter catalog by type (skill/MCP/tool)
-- [ ] **CATL-06**: Each item has documentation (description, usage examples)
+- [x] **CATL-01**: User can browse all skills available company-wide
+- [x] **CATL-02**: User can browse all MCPs available company-wide
+- [x] **CATL-03**: User can browse all tools available company-wide
+- [x] **CATL-04**: User can search catalog by keyword
+- [x] **CATL-05**: User can filter catalog by type (skill/MCP/tool)
+- [x] **CATL-06**: Each item has documentation (description, usage examples)
 
 ### Configuration
 
-- [ ] **CONF-01**: User can edit their claude.md through web UI
-- [ ] **CONF-02**: All configurations stored in git-backed repository
-- [ ] **CONF-03**: User can view version history of their config
-- [ ] **CONF-04**: User can rollback to previous config version
-- [ ] **CONF-05**: User can import existing claude.md from local machine
+- [x] **CONF-01**: User can edit their claude.md through web UI
+- [x] **CONF-02**: All configurations stored in git-backed repository
+- [x] **CONF-03**: User can view version history of their config
+- [x] **CONF-04**: User can rollback to previous config version
+- [x] **CONF-05**: User can import existing claude.md from local machine
 
 ### Sync & Distribution
 
@@ -114,17 +114,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROF-01 | Phase 5 | Pending |
 | PROF-02 | Phase 5 | Pending |
 | PROF-03 | Phase 5 | Pending |
-| CATL-01 | Phase 3 | Pending |
-| CATL-02 | Phase 3 | Pending |
-| CATL-03 | Phase 3 | Pending |
-| CATL-04 | Phase 3 | Pending |
-| CATL-05 | Phase 3 | Pending |
-| CATL-06 | Phase 3 | Pending |
-| CONF-01 | Phase 4 | Pending |
-| CONF-02 | Phase 4 | Pending |
-| CONF-03 | Phase 4 | Pending |
-| CONF-04 | Phase 4 | Pending |
-| CONF-05 | Phase 4 | Pending |
+| CATL-01 | Phase 3 | Complete |
+| CATL-02 | Phase 3 | Complete |
+| CATL-03 | Phase 3 | Complete |
+| CATL-04 | Phase 3 | Complete |
+| CATL-05 | Phase 3 | Complete |
+| CATL-06 | Phase 3 | Complete |
+| CONF-01 | Phase 4 | Complete |
+| CONF-02 | Phase 4 | Complete |
+| CONF-03 | Phase 4 | Complete |
+| CONF-04 | Phase 4 | Complete |
+| CONF-05 | Phase 4 | Complete |
 | SYNC-01 | Phase 8 | Pending |
 | SYNC-02 | Phase 8 | Pending |
 | SYNC-03 | Phase 8 | Pending |

@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Data Architecture** - PostgreSQL schema, Git integration, RBAC abstractions
 - [x] **Phase 2: Authentication** - User accounts, sessions, password management
 - [x] **Phase 3: Catalog Backend** - Skills/MCPs/tools API with search and filtering
-- [ ] **Phase 4: Configuration Backend** - Profile editing API with git-backed versioning
+- [x] **Phase 4: Configuration Backend** - Profile editing API with git-backed versioning
 - [ ] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
 - [ ] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
 - [ ] **Phase 7: Web Frontend Configuration** - Profile editor, version history, import
@@ -89,9 +89,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Domain layer (entities, interfaces), DB model, migration, ContentRepository extension
-- [ ] 04-02-PLAN.md — Repository implementations (PostgreSQL, in-memory, GitHub/in-memory content extensions)
-- [ ] 04-03-PLAN.md — ConfigurationService, all REST endpoints, dependency injection
+- [x] 04-01-PLAN.md — Domain layer (entities, interfaces), DB model, migration, ContentRepository extension
+- [x] 04-02-PLAN.md — Repository implementations (PostgreSQL, in-memory, GitHub/in-memory content extensions)
+- [x] 04-03-PLAN.md — ConfigurationService, all REST endpoints, dependency injection
 
 ### Phase 5: User Profiles Backend
 **Goal**: Backend APIs serve user dashboard data with configuration inheritance
@@ -196,7 +196,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 1. Foundation & Data Architecture | 5/5 | Complete | 2026-01-23 |
 | 2. Authentication | 3/3 | Complete | 2026-01-23 |
 | 3. Catalog Backend | 2/2 | Complete | 2026-01-24 |
-| 4. Configuration Backend | 0/3 | Not started | - |
+| 4. Configuration Backend | 3/3 | Complete | 2026-01-24 |
 | 5. User Profiles Backend | 0/3 | Not started | - |
 | 6. Web Frontend Core | 0/5 | Not started | - |
 | 7. Web Frontend Configuration | 0/5 | Not started | - |
