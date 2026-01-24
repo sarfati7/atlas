@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LoginPage } from './login'
 import { SignupPage } from './signup'
 import { ResetPasswordPage } from './reset-password'
+import { DashboardPage } from './dashboard'
+import { guestLoader, protectedLoader } from '@/lib/loaders'
 
 /**
  * Centralized router configuration using createBrowserRouter.
@@ -24,27 +26,37 @@ export const router = createBrowserRouter([
     element: <Navigate to="/catalog" replace />,
   },
 
-  // Auth routes (no layout wrapper)
+  // Auth routes (no layout wrapper, guest-only)
   {
     path: '/login',
     element: <LoginPage />,
+    loader: guestLoader,
   },
   {
     path: '/signup',
     element: <SignupPage />,
+    loader: guestLoader,
   },
   {
     path: '/reset-password',
     element: <ResetPasswordPage />,
   },
 
-  // Placeholder routes until 06-03, 06-04, 06-05 complete them
+  // Placeholder routes until 06-03, 06-04 complete them
   {
     path: '/catalog',
     element: <div className="min-h-screen flex items-center justify-center bg-background text-foreground">Catalog (coming in 06-03)</div>,
   },
+
+  // Protected routes (require authentication)
   {
     path: '/dashboard',
-    element: <div className="min-h-screen flex items-center justify-center bg-background text-foreground">Dashboard (coming in 06-05)</div>,
+    element: <DashboardPage />,
+    loader: protectedLoader,
+  },
+  {
+    path: '/settings',
+    element: <div className="min-h-screen flex items-center justify-center bg-background text-foreground">Settings (coming in 07-xx)</div>,
+    loader: protectedLoader,
   },
 ])
