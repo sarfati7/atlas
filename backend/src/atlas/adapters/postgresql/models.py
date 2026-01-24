@@ -73,3 +73,16 @@ class CatalogItemModel(SQLModel, table=True):
     usage_count: int = Field(default=0)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class UserConfigurationModel(SQLModel, table=True):
+    """SQLModel table for user configuration metadata."""
+
+    __tablename__ = "user_configurations"
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: UUID = Field(foreign_key="users.id", unique=True, index=True)
+    git_path: str = Field(unique=True)  # e.g., "configs/users/{uuid}/claude.md"
+    current_commit_sha: str = Field(default="")  # Empty until first save
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
