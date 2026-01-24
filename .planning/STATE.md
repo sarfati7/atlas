@@ -129,6 +129,9 @@ Recent decisions affecting current work:
 - [06-03]: CatalogQueryParams renamed from CatalogFilters to avoid component name conflict
 - [06-03]: Type-colored badges (blue SKILL, purple MCP, green TOOL)
 - [06-03]: RootLayout wraps all app routes (catalog, dashboard, settings)
+- [06-05]: protectedLoader checks Zustand store directly (no async API call)
+- [06-05]: guestLoader redirects authenticated users from login/signup to dashboard
+- [06-05]: Profile feature uses standard module pattern (api/hooks/components)
 
 ### Pending Todos
 
