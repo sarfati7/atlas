@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Catalog Backend** - Skills/MCPs/tools API with search and filtering
 - [x] **Phase 4: Configuration Backend** - Profile editing API with git-backed versioning
 - [x] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
-- [ ] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
+- [x] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
 - [ ] **Phase 7: Web Frontend Configuration** - Profile editor, version history, import
 - [ ] **Phase 8: CLI Sync Tool** - Atomic sync, authentication, cross-platform support
 - [ ] **Phase 9: Governance & Admin** - Admin panel, audit logging, team management
@@ -120,11 +120,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — React project setup with Vite, TanStack Query, shadcn/ui, and dark theme
-- [ ] 06-02-PLAN.md — Authentication pages (signup, login, logout, password reset) with forms
-- [ ] 06-03-PLAN.md — Catalog browser with card layout, type filtering, and search
-- [ ] 06-04-PLAN.md — Catalog item detail view with markdown documentation
-- [ ] 06-05-PLAN.md — User dashboard with stats and configuration preview
+- [x] 06-01-PLAN.md — React project setup with Vite, TanStack Query, shadcn/ui, and dark theme
+- [x] 06-02-PLAN.md — Authentication pages (signup, login, logout, password reset) with forms
+- [x] 06-03-PLAN.md — Catalog browser with card layout, type filtering, and search
+- [x] 06-04-PLAN.md — Catalog item detail view with markdown documentation
+- [x] 06-05-PLAN.md — User dashboard with stats and configuration preview
 
 ### Phase 7: Web Frontend Configuration
 **Goal**: Web UI enables profile editing with version history and import
@@ -197,7 +197,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 3. Catalog Backend | 2/2 | Complete | 2026-01-24 |
 | 4. Configuration Backend | 3/3 | Complete | 2026-01-24 |
 | 5. User Profiles Backend | 2/2 | Complete | 2026-01-24 |
-| 6. Web Frontend Core | 0/5 | Not started | - |
+| 6. Web Frontend Core | 5/5 | Complete | 2026-01-24 |
 | 7. Web Frontend Configuration | 0/5 | Not started | - |
 | 8. CLI Sync Tool | 0/5 | Not started | - |
 | 9. Governance & Admin | 0/5 | Not started | - |
