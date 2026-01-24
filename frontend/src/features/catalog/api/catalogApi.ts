@@ -5,13 +5,13 @@
  */
 
 import { apiClient } from '@/lib/api'
-import type { CatalogFilters, CatalogItemDetail, PaginatedCatalog } from '../types'
+import type { CatalogQueryParams, CatalogItemDetail, PaginatedCatalog } from '../types'
 
 export const catalogApi = {
   /**
    * Get paginated catalog items with optional filters.
    */
-  async getItems(filters: CatalogFilters = {}): Promise<PaginatedCatalog> {
+  async getItems(filters: CatalogQueryParams = {}): Promise<PaginatedCatalog> {
     const params = new URLSearchParams()
 
     if (filters.type) {

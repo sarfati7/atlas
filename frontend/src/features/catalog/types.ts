@@ -32,7 +32,7 @@ export interface PaginatedCatalog {
   pages: number
 }
 
-export interface CatalogFilters {
+export interface CatalogQueryParams {
   type?: CatalogItemType
   q?: string
   page?: number

@@ -4,7 +4,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { catalogApi } from '../api/catalogApi'
-import type { CatalogFilters } from '../types'
+import type { CatalogQueryParams } from '../types'
 
 /**
  * Query key factory for catalog queries.
@@ -12,7 +12,7 @@ import type { CatalogFilters } from '../types'
 export const catalogKeys = {
   all: ['catalog'] as const,
   lists: () => [...catalogKeys.all, 'list'] as const,
-  list: (filters: CatalogFilters) => [...catalogKeys.lists(), filters] as const,
+  list: (filters: CatalogQueryParams) => [...catalogKeys.lists(), filters] as const,
   details: () => [...catalogKeys.all, 'detail'] as const,
   detail: (id: string) => [...catalogKeys.details(), id] as const,
 }
@@ -20,7 +20,7 @@ export const catalogKeys = {
 /**
  * Hook to fetch paginated catalog items with filters.
  */
-export function useCatalogItems(filters: CatalogFilters = {}) {
+export function useCatalogItems(filters: CatalogQueryParams = {}) {
   return useQuery({
     queryKey: catalogKeys.list(filters),
     queryFn: () => catalogApi.getItems(filters),
