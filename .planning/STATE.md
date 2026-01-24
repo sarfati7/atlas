@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 6 - Web Frontend Core (Plan 1 of 5 complete)
+**Current focus:** Phase 6 - Web Frontend Core (Plan 2 of 5 complete)
 
 ## Current Position
 
 Phase: 6 of 9 (Web Frontend Core)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-24 - Completed 06-01-PLAN.md
+Last activity: 2026-01-24 - Completed 06-02-PLAN.md
 
-Progress: [========..] 47%
+Progress: [========..] 50%
 
 ## Phase 6 Progress
 
@@ -25,7 +25,7 @@ Progress: [========..] 47%
 | Plan | Wave | What it builds | Status |
 |------|------|----------------|--------|
 | 06-01 | 1 | Project setup, API client, dark theme | COMPLETE |
-| 06-02 | 2 | Auth pages (login, signup, password reset) | Pending |
+| 06-02 | 2 | Auth pages (login, signup, password reset) | COMPLETE |
 | 06-03 | 2 | Catalog browser with cards and filters | Pending |
 | 06-04 | 3 | Catalog detail page with documentation | Pending |
 | 06-05 | 2 | User dashboard | Pending |
@@ -38,9 +38,9 @@ Progress: [========..] 47%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 3.7 min
-- Total execution time: 0.98 hours
+- Total plans completed: 17
+- Average duration: 3.6 min
+- Total execution time: 1.05 hours
 
 **By Phase:**
 
@@ -51,11 +51,11 @@ Progress: [========..] 47%
 | 3 | 2 | 8 min | 4.0 min |
 | 4 | 3 | 8 min | 2.7 min |
 | 5 | 2 | 6 min | 3.0 min |
-| 6 | 1 | 10 min | 10.0 min |
+| 6 | 2 | 14 min | 7.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (3 min), 05-01 (3 min), 05-02 (3 min), 06-01 (10 min)
-- Trend: 06-01 longer due to npm installs and shadcn init
+- Last 5 plans: 05-01 (3 min), 05-02 (3 min), 06-01 (10 min), 06-02 (4 min)
+- Trend: 06-02 faster as foundational work complete
 
 *Updated after each plan completion*
 
@@ -121,6 +121,10 @@ Recent decisions affecting current work:
 - [06-01]: createBrowserRouter pattern (not BrowserRouter with Routes)
 - [06-01]: Request queue pattern for concurrent 401 handling
 - [06-01]: auth:logout custom event for store cleanup on refresh failure
+- [06-02]: OAuth2 form data format for login (username field contains email)
+- [06-02]: Forgot password toggles form in place rather than separate route
+- [06-02]: Registration shows success screen, requires manual login afterward
+- [06-02]: Reset password validates token from URL query param
 
 ### Pending Todos
 
@@ -197,6 +201,6 @@ Profile API endpoints:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 06-01-PLAN.md (Project scaffolding)
+Stopped at: Completed 06-02-PLAN.md (Auth pages)
 Resume file: None
-Next: Continue Phase 6 with 06-02 (auth pages), 06-03 (catalog), 06-04 (detail), 06-05 (dashboard)
+Next: Continue Phase 6 with 06-03 (catalog), 06-04 (detail), 06-05 (dashboard)
