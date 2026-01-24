@@ -15,7 +15,7 @@ from atlas.adapters.postgresql.repositories import (
     PostgresTeamRepository,
     PostgresUserRepository,
 )
-from atlas.application.services import ConfigurationService
+from atlas.application.services import ConfigurationService, UserProfileService
 from atlas.adapters.postgresql.session import AsyncSession, get_session
 from atlas.adapters.sync import GitCatalogSyncService
 from atlas.config import settings
@@ -120,6 +120,25 @@ async def get_configuration_service(
 ) -> ConfigurationService:
     """Provide configuration service implementation."""
     return ConfigurationService(config_repo, content_repo)
+
+
+# User profile service
+
+async def get_user_profile_service(
+    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    team_repo: Annotated[AbstractTeamRepository, Depends(get_team_repository)],
+    catalog_repo: Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)],
+    config_repo: Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)],
+    content_repo: Annotated[AbstractContentRepository, Depends(get_content_repository)],
+) -> UserProfileService:
+    """Provide user profile service implementation."""
+    return UserProfileService(
+        user_repo=user_repo,
+        team_repo=team_repo,
+        catalog_repo=catalog_repo,
+        config_repo=config_repo,
+        content_repo=content_repo,
+    )
 
 
 # Email service (conditional on config)
@@ -251,6 +270,7 @@ EmailSvc = Annotated[AbstractEmailService, Depends(get_email_service)]
 SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
 ConfigRepo = Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)]
 ConfigService = Annotated[ConfigurationService, Depends(get_configuration_service)]
+ProfileService = Annotated[UserProfileService, Depends(get_user_profile_service)]
 
 # Current user type aliases
 CurrentUser = Annotated[User, Depends(get_current_user)]
