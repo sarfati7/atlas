@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 6 - Web Frontend Core (Plan 4 of 5 complete)
+**Current focus:** Phase 6 - Web Frontend Core COMPLETE
 
 ## Current Position
 
 Phase: 6 of 9 (Web Frontend Core)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-24 - Completed 06-02, 06-03, 06-05 (parallel wave 2)
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-01-24 - Completed 06-04 (catalog detail page)
 
-Progress: [=========.] 56%
+Progress: [==========] 60%
 
 ## Phase 6 Progress
 
@@ -27,7 +27,7 @@ Progress: [=========.] 56%
 | 06-01 | 1 | Project setup, API client, dark theme | COMPLETE |
 | 06-02 | 2 | Auth pages (login, signup, password reset) | COMPLETE |
 | 06-03 | 2 | Catalog browser with cards and filters | COMPLETE |
-| 06-04 | 3 | Catalog detail page with documentation | Pending |
+| 06-04 | 3 | Catalog detail page with documentation | COMPLETE |
 | 06-05 | 2 | User dashboard | COMPLETE |
 
 **Key docs:**
@@ -38,9 +38,9 @@ Progress: [=========.] 56%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
-- Average duration: 3.6 min
-- Total execution time: 1.21 hours
+- Total plans completed: 20
+- Average duration: 3.5 min
+- Total execution time: 1.25 hours
 
 **By Phase:**
 
@@ -51,11 +51,11 @@ Progress: [=========.] 56%
 | 3 | 2 | 8 min | 4.0 min |
 | 4 | 3 | 8 min | 2.7 min |
 | 5 | 2 | 6 min | 3.0 min |
-| 6 | 4 | 24 min | 6.0 min |
+| 6 | 5 | 26 min | 5.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (10 min), 06-02 (4 min), 06-03 (5 min), 06-05 (5 min)
-- Trend: Wave 2 plans running in parallel completed efficiently
+- Last 5 plans: 06-02 (4 min), 06-03 (5 min), 06-05 (5 min), 06-04 (2 min)
+- Trend: Phase 6 complete, all frontend plans executed efficiently
 
 *Updated after each plan completion*
 
@@ -132,6 +132,8 @@ Recent decisions affecting current work:
 - [06-05]: protectedLoader checks Zustand store directly (no async API call)
 - [06-05]: guestLoader redirects authenticated users from login/signup to dashboard
 - [06-05]: Profile feature uses standard module pattern (api/hooks/components)
+- [06-04]: Type badge colors: emerald SKILL, blue MCP, amber TOOL for detail page
+- [06-04]: DocumentationViewer with react-markdown and remark-gfm for README rendering
 
 ### Pending Todos
 
@@ -205,9 +207,27 @@ Profile API endpoints:
 - GET /api/v1/profile/available-items - catalog items with optional type filter
 - GET /api/v1/profile/effective-configuration - merged config with source breakdown
 
+## Phase 6 Completion Summary
+
+All success criteria from ROADMAP.md are met:
+
+1. User can log in/log out (06-01, 06-02)
+2. User can browse catalog with search and type filtering (06-03)
+3. User can view catalog item details with documentation (06-04)
+4. User can view their dashboard (06-05)
+5. Protected routes redirect unauthenticated users (06-05)
+
+Frontend pages:
+- /login - Login with email/password
+- /signup - User registration
+- /reset-password - Password reset flow
+- /catalog - Browse catalog with search and filters
+- /catalog/:id - View item detail with README documentation
+- /dashboard - User dashboard with profile info
+
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 06-03-PLAN.md (Catalog browser)
+Stopped at: Completed 06-04-PLAN.md (Catalog detail page)
 Resume file: None
-Next: Continue Phase 6 with 06-04 (catalog detail)
+Next: Phase 7 or deployment testing
