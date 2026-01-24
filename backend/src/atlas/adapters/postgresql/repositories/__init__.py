@@ -3,6 +3,9 @@
 from atlas.adapters.postgresql.repositories.catalog_repository import (
     PostgresCatalogRepository,
 )
+from atlas.adapters.postgresql.repositories.configuration_repository import (
+    PostgresConfigurationRepository,
+)
 from atlas.adapters.postgresql.repositories.team_repository import (
     PostgresTeamRepository,
 )
@@ -12,6 +15,7 @@ from atlas.adapters.postgresql.repositories.user_repository import (
 
 __all__ = [
     "PostgresCatalogRepository",
+    "PostgresConfigurationRepository",
     "PostgresTeamRepository",
     "PostgresUserRepository",
 ]
