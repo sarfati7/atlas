@@ -1,10 +1,12 @@
 """GitHub content repository - Implements content storage via GitHub API."""
 
 import asyncio
+from datetime import datetime
 from typing import Optional
 
 from github import Github, GithubException
 
+from atlas.domain.entities import ConfigurationVersion
 from atlas.domain.interfaces import AbstractContentRepository
 
 
@@ -108,5 +110,56 @@ class GitHubContentRepository(AbstractContentRepository):
             if first_commit:
                 return first_commit.sha
             return None
+        except GithubException:
+            return None
+
+    async def get_version_history(
+        self,
+        path: str,
+        limit: int = 50,
+    ) -> list[ConfigurationVersion]:
+        """Get commit history for a file."""
+        try:
+            commits = await asyncio.to_thread(
+                self._repo.get_commits,
+                path=path,
+            )
+            versions = []
+            for i, commit in enumerate(commits):
+                if i >= limit:
+                    break
+                versions.append(
+                    ConfigurationVersion(
+                        commit_sha=commit.sha,
+                        message=commit.commit.message,
+                        author=(
+                            commit.commit.author.name
+                            if commit.commit.author
+                            else "Unknown"
+                        ),
+                        timestamp=(
+                            commit.commit.author.date
+                            if commit.commit.author
+                            else datetime.utcnow()
+                        ),
+                    )
+                )
+            return versions
+        except GithubException:
+            return []
+
+    async def get_content_at_version(
+        self,
+        path: str,
+        commit_sha: str,
+    ) -> Optional[str]:
+        """Get file content at specific commit SHA."""
+        try:
+            content = await asyncio.to_thread(
+                self._repo.get_contents,
+                path,
+                ref=commit_sha,
+            )
+            return content.decoded_content.decode("utf-8")
         except GithubException:
             return None

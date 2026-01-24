@@ -1,8 +1,10 @@
 """In-memory content repository - Implements content storage for testing."""
 
+from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
+from atlas.domain.entities import ConfigurationVersion
 from atlas.domain.interfaces import AbstractContentRepository
 
 
@@ -60,6 +62,33 @@ class InMemoryContentRepository(AbstractContentRepository):
     async def get_commit_sha(self, path: str) -> Optional[str]:
         """Get the latest commit SHA for a file."""
         return self._commit_shas.get(path)
+
+    async def get_version_history(
+        self,
+        path: str,
+        limit: int = 50,
+    ) -> list[ConfigurationVersion]:
+        """Get version history (in-memory returns single version if file exists)."""
+        if path not in self._contents:
+            return []
+        # In-memory doesn't track history, return current "version"
+        return [
+            ConfigurationVersion(
+                commit_sha=self._commit_shas.get(path, "in-memory-sha"),
+                message="In-memory content",
+                author="test",
+                timestamp=datetime.utcnow(),
+            )
+        ]
+
+    async def get_content_at_version(
+        self,
+        path: str,
+        commit_sha: str,
+    ) -> Optional[str]:
+        """Get content at version (in-memory returns current content if SHA matches)."""
+        # In-memory doesn't track versions, just return current content
+        return self._contents.get(path)
 
     def clear(self) -> None:
         """Clear all stored content (useful for tests)."""
