@@ -3,6 +3,9 @@
 from atlas.domain.interfaces.auth_service import AbstractAuthService
 from atlas.domain.interfaces.authorization import AbstractAuthorizationService
 from atlas.domain.interfaces.catalog_repository import AbstractCatalogRepository
+from atlas.domain.interfaces.configuration_repository import (
+    AbstractConfigurationRepository,
+)
 from atlas.domain.interfaces.content_repository import AbstractContentRepository
 from atlas.domain.interfaces.email_service import AbstractEmailService
 from atlas.domain.interfaces.sync_service import AbstractSyncService, SyncResult
@@ -15,6 +18,7 @@ __all__ = [
     "AbstractUserRepository",
     "AbstractTeamRepository",
     "AbstractCatalogRepository",
+    "AbstractConfigurationRepository",
     "AbstractContentRepository",
     "AbstractAuthorizationService",
     "AbstractSyncService",

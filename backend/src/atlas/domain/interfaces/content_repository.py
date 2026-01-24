@@ -3,6 +3,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from atlas.domain.entities import ConfigurationVersion
+
 
 class AbstractContentRepository(ABC):
     """
@@ -70,5 +72,32 @@ class AbstractContentRepository(ABC):
         Get the latest commit SHA for a file.
 
         Returns None if file does not exist.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_version_history(
+        self,
+        path: str,
+        limit: int = 50,
+    ) -> list[ConfigurationVersion]:
+        """
+        Get commit history for a file.
+
+        Returns list of versions ordered by timestamp (newest first).
+        Limited to prevent unbounded queries.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_content_at_version(
+        self,
+        path: str,
+        commit_sha: str,
+    ) -> Optional[str]:
+        """
+        Get file content at a specific commit SHA.
+
+        Returns None if file or commit doesn't exist.
         """
         raise NotImplementedError
