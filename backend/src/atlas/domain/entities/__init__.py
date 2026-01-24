@@ -7,6 +7,7 @@ from atlas.domain.entities.user_configuration import (
     UserConfiguration,
     ConfigurationVersion,
 )
+from atlas.domain.entities.effective_configuration import EffectiveConfiguration
 
 __all__ = [
     "User",
@@ -15,4 +16,5 @@ __all__ = [
     "CatalogItemType",
     "UserConfiguration",
     "ConfigurationVersion",
+    "EffectiveConfiguration",
 ]
