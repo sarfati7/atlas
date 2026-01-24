@@ -3,6 +3,7 @@ import { LoginPage } from './login'
 import { SignupPage } from './signup'
 import { ResetPasswordPage } from './reset-password'
 import { CatalogPage } from './catalog'
+import { CatalogDetailPage } from './catalog-detail'
 import { DashboardPage } from './dashboard'
 import { RootLayout } from '@/components/layout'
 import { guestLoader, protectedLoader } from '@/lib/loaders'
@@ -54,7 +55,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/catalog/:id',
-        element: <div className="p-6">Catalog Detail (coming in 06-04)</div>,
+        element: <CatalogDetailPage />,
       },
       {
         path: '/dashboard',
