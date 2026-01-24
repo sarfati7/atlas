@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 4 - Configuration Backend (domain layer complete)
+**Current focus:** Phase 4 - Configuration Backend (repositories complete)
 
 ## Current Position
 
 Phase: 4 of 9 (Configuration Backend)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-24 - Completed 04-01-PLAN.md
+Last activity: 2026-01-24 - Completed 04-02-PLAN.md
 
-Progress: [=====.....] 30%
+Progress: [======....] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 3.6 min
-- Total execution time: 0.67 hours
+- Total plans completed: 12
+- Average duration: 3.5 min
+- Total execution time: 0.72 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [=====.....] 30%
 | 1 | 5 | 18 min | 3.6 min |
 | 2 | 3 | 12 min | 4.0 min |
 | 3 | 2 | 8 min | 4.0 min |
-| 4 | 1 | 2 min | 2.0 min |
+| 4 | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (4 min), 02-02 (3 min), 02-03 (5 min), 03-02 (4 min), 04-01 (2 min)
-- Trend: stable (04-01 fast due to straightforward domain setup)
+- Last 5 plans: 02-02 (3 min), 02-03 (5 min), 03-02 (4 min), 04-01 (2 min), 04-02 (3 min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -82,6 +82,8 @@ Recent decisions affecting current work:
 - [04-01]: ConfigurationVersion is dataclass (not Pydantic) for simple value object
 - [04-01]: user_id unique constraint enforces one config per user
 - [04-01]: git_path also unique to prevent collision if paths change
+- [04-02]: Upsert logic handles both config.id lookup and user_id collision
+- [04-02]: In-memory version history returns single 'current' version for testing simplicity
 
 ### Pending Todos
 
@@ -128,6 +130,6 @@ Catalog API endpoints:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 04-01-PLAN.md (domain layer for configuration)
+Stopped at: Completed 04-02-PLAN.md (repository adapters)
 Resume file: None
-Next: 04-02-PLAN.md (repository implementation)
+Next: 04-03-PLAN.md (API endpoints)
