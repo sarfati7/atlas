@@ -5,45 +5,42 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 6 Ready - Web Frontend Core
+**Current focus:** Phase 6 - Web Frontend Core (Plan 1 of 5 complete)
 
 ## Current Position
 
 Phase: 6 of 9 (Web Frontend Core)
-Plan: 0 of 5 in current phase
-Status: Planned, ready for execution
-Last activity: 2026-01-24 - Phase 6 planning complete
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-24 - Completed 06-01-PLAN.md
 
-Progress: [========..] 44%
+Progress: [========..] 47%
 
-## Phase 6 Handoff
+## Phase 6 Progress
 
 **What:** React web frontend for auth, catalog browsing, and dashboard
 **Tech stack:** Vite + React 18 + TypeScript + TanStack Query + shadcn/ui
 **Theme:** Dark-only, developer-focused (GitHub-like)
 
-**Plans ready to execute:**
-| Plan | Wave | What it builds |
-|------|------|----------------|
-| 06-01 | 1 | Project setup, API client, dark theme |
-| 06-02 | 2 | Auth pages (login, signup, password reset) |
-| 06-03 | 2 | Catalog browser with cards and filters |
-| 06-04 | 3 | Catalog detail page with documentation |
-| 06-05 | 2 | User dashboard |
-
-**To execute:** `/gsd:execute-phase 6`
+| Plan | Wave | What it builds | Status |
+|------|------|----------------|--------|
+| 06-01 | 1 | Project setup, API client, dark theme | COMPLETE |
+| 06-02 | 2 | Auth pages (login, signup, password reset) | Pending |
+| 06-03 | 2 | Catalog browser with cards and filters | Pending |
+| 06-04 | 3 | Catalog detail page with documentation | Pending |
+| 06-05 | 2 | User dashboard | Pending |
 
 **Key docs:**
-- `.planning/phases/06-web-frontend-core/06-CONTEXT.md` — User decisions
-- `.planning/phases/06-web-frontend-core/06-RESEARCH.md` — Tech research
-- `.planning/phases/06-web-frontend-core/06-*-PLAN.md` — Executable plans
+- `.planning/phases/06-web-frontend-core/06-CONTEXT.md` - User decisions
+- `.planning/phases/06-web-frontend-core/06-RESEARCH.md` - Tech research
+- `.planning/phases/06-web-frontend-core/06-01-SUMMARY.md` - Completed plan summary
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 3.4 min
-- Total execution time: 0.87 hours
+- Total plans completed: 16
+- Average duration: 3.7 min
+- Total execution time: 0.98 hours
 
 **By Phase:**
 
@@ -54,10 +51,11 @@ Progress: [========..] 44%
 | 3 | 2 | 8 min | 4.0 min |
 | 4 | 3 | 8 min | 2.7 min |
 | 5 | 2 | 6 min | 3.0 min |
+| 6 | 1 | 10 min | 10.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (2 min), 04-02 (3 min), 04-03 (3 min), 05-01 (3 min), 05-02 (3 min)
-- Trend: stable
+- Last 5 plans: 04-03 (3 min), 05-01 (3 min), 05-02 (3 min), 06-01 (10 min)
+- Trend: 06-01 longer due to npm installs and shadcn init
 
 *Updated after each plan completion*
 
@@ -119,6 +117,10 @@ Recent decisions affecting current work:
 - [05-02]: EffectiveConfigurationResponse shows boolean flags for org/team/user applied
 - [05-02]: Available-items filter uses Query param with Optional[CatalogItemType]
 - [05-02]: UserNotFoundError returns 404 on dashboard (vs empty list for available-items)
+- [06-01]: Dark-only theme using OKLCH color space (GitHub aesthetic)
+- [06-01]: createBrowserRouter pattern (not BrowserRouter with Routes)
+- [06-01]: Request queue pattern for concurrent 401 handling
+- [06-01]: auth:logout custom event for store cleanup on refresh failure
 
 ### Pending Todos
 
@@ -195,6 +197,6 @@ Profile API endpoints:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 6 planning complete (5 plans ready)
+Stopped at: Completed 06-01-PLAN.md (Project scaffolding)
 Resume file: None
-Next: Execute Phase 6 (Web Frontend Core) with `/gsd:execute-phase 6`
+Next: Continue Phase 6 with 06-02 (auth pages), 06-03 (catalog), 06-04 (detail), 06-05 (dashboard)
