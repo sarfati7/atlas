@@ -1,9 +1,22 @@
 import axios from 'axios'
+import { useAuthStore } from '@/stores/authStore'
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
   withCredentials: true, // Include httpOnly cookies
 })
+
+// Request interceptor to attach Bearer token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().accessToken
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
 
 // Track if we're currently refreshing to prevent multiple refresh calls
 let isRefreshing = false
