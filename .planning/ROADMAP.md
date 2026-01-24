@@ -117,14 +117,14 @@ Plans:
   3. User can filter catalog by type and search by keyword
   4. User can view documentation for any catalog item
   5. User can view their personal dashboard showing their agent configuration
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 06-01: React project setup with Vite, TanStack Query, Zustand
-- [ ] 06-02: Authentication pages (signup, login, logout, password reset)
-- [ ] 06-03: Catalog browser with search and filtering
-- [ ] 06-04: Catalog item detail view with documentation
-- [ ] 06-05: User dashboard and profile view
+- [ ] 06-01-PLAN.md — React project setup with Vite, TanStack Query, shadcn/ui, and dark theme
+- [ ] 06-02-PLAN.md — Authentication pages (signup, login, logout, password reset) with forms
+- [ ] 06-03-PLAN.md — Catalog browser with card layout, type filtering, and search
+- [ ] 06-04-PLAN.md — Catalog item detail view with markdown documentation
+- [ ] 06-05-PLAN.md — User dashboard with stats and configuration preview
 
 ### Phase 7: Web Frontend Configuration
 **Goal**: Web UI enables profile editing with version history and import
