@@ -11,9 +11,11 @@ from atlas.adapters.authorization.permissive import PermissiveAuthorizationServi
 from atlas.adapters.github.content_repository import GitHubContentRepository
 from atlas.adapters.postgresql.repositories import (
     PostgresCatalogRepository,
+    PostgresConfigurationRepository,
     PostgresTeamRepository,
     PostgresUserRepository,
 )
+from atlas.application.services import ConfigurationService
 from atlas.adapters.postgresql.session import AsyncSession, get_session
 from atlas.adapters.sync import GitCatalogSyncService
 from atlas.config import settings
@@ -22,6 +24,7 @@ from atlas.domain.interfaces import (
     AbstractAuthService,
     AbstractAuthorizationService,
     AbstractCatalogRepository,
+    AbstractConfigurationRepository,
     AbstractContentRepository,
     AbstractEmailService,
     AbstractSyncService,
@@ -54,6 +57,13 @@ async def get_catalog_repository(
 ) -> AbstractCatalogRepository:
     """Provide catalog repository implementation."""
     return PostgresCatalogRepository(session)
+
+
+async def get_configuration_repository(
+    session: Annotated[AsyncSession, Depends(get_session)]
+) -> AbstractConfigurationRepository:
+    """Provide configuration repository implementation."""
+    return PostgresConfigurationRepository(session)
 
 
 # Content repository (conditional on config)
@@ -100,6 +110,16 @@ async def get_sync_service(
     Uses system author ID for items created via webhook or automated sync.
     """
     return GitCatalogSyncService(content_repo, catalog_repo, SYSTEM_AUTHOR_ID)
+
+
+# Configuration service
+
+async def get_configuration_service(
+    config_repo: Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)],
+    content_repo: Annotated[AbstractContentRepository, Depends(get_content_repository)],
+) -> ConfigurationService:
+    """Provide configuration service implementation."""
+    return ConfigurationService(config_repo, content_repo)
 
 
 # Email service (conditional on config)
@@ -229,6 +249,8 @@ AuthorizationSvc = Annotated[AbstractAuthorizationService, Depends(get_authoriza
 AuthenticationSvc = Annotated[AbstractAuthService, Depends(get_auth_service)]
 EmailSvc = Annotated[AbstractEmailService, Depends(get_email_service)]
 SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
+ConfigRepo = Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)]
+ConfigService = Annotated[ConfigurationService, Depends(get_configuration_service)]
 
 # Current user type aliases
 CurrentUser = Annotated[User, Depends(get_current_user)]
