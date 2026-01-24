@@ -16,9 +16,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### User Profiles
 
-- [ ] **PROF-01**: User has personal dashboard showing their agent config
-- [ ] **PROF-02**: User can view their available skills, MCPs, and tools
-- [ ] **PROF-03**: User profile supports configuration inheritance (org -> team -> user)
+- [x] **PROF-01**: User has personal dashboard showing their agent config
+- [x] **PROF-02**: User can view their available skills, MCPs, and tools
+- [x] **PROF-03**: User profile supports configuration inheritance (org -> team -> user)
 
 ### Catalog & Discovery
 
@@ -111,9 +111,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-02 | Phase 2 | Complete |
 | AUTH-03 | Phase 2 | Complete |
 | AUTH-04 | Phase 2 | Complete |
-| PROF-01 | Phase 5 | Pending |
-| PROF-02 | Phase 5 | Pending |
-| PROF-03 | Phase 5 | Pending |
+| PROF-01 | Phase 5 | Complete |
+| PROF-02 | Phase 5 | Complete |
+| PROF-03 | Phase 5 | Complete |
 | CATL-01 | Phase 3 | Complete |
 | CATL-02 | Phase 3 | Complete |
 | CATL-03 | Phase 3 | Complete |

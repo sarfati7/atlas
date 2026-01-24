@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Authentication** - User accounts, sessions, password management
 - [x] **Phase 3: Catalog Backend** - Skills/MCPs/tools API with search and filtering
 - [x] **Phase 4: Configuration Backend** - Profile editing API with git-backed versioning
-- [ ] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
+- [x] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
 - [ ] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
 - [ ] **Phase 7: Web Frontend Configuration** - Profile editor, version history, import
 - [ ] **Phase 8: CLI Sync Tool** - Atomic sync, authentication, cross-platform support
@@ -104,8 +104,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Domain entity (EffectiveConfiguration) and UserProfileService with aggregation + inheritance
-- [ ] 05-02-PLAN.md — Profile REST endpoints (/dashboard, /available-items, /effective-configuration) and DI
+- [x] 05-01-PLAN.md — Domain entity (EffectiveConfiguration) and UserProfileService with aggregation + inheritance
+- [x] 05-02-PLAN.md — Profile REST endpoints (/dashboard, /available-items, /effective-configuration) and DI
 
 ### Phase 6: Web Frontend Core
 **Goal**: Web UI enables authentication, catalog browsing, and profile viewing
@@ -196,7 +196,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 2. Authentication | 3/3 | Complete | 2026-01-23 |
 | 3. Catalog Backend | 2/2 | Complete | 2026-01-24 |
 | 4. Configuration Backend | 3/3 | Complete | 2026-01-24 |
-| 5. User Profiles Backend | 0/2 | Not started | - |
+| 5. User Profiles Backend | 2/2 | Complete | 2026-01-24 |
 | 6. Web Frontend Core | 0/5 | Not started | - |
 | 7. Web Frontend Configuration | 0/5 | Not started | - |
 | 8. CLI Sync Tool | 0/5 | Not started | - |
