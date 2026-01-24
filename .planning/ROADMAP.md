@@ -101,12 +101,11 @@ Plans:
   1. API returns user's personal dashboard data including their agent configuration
   2. API returns user's available skills, MCPs, and tools (their effective configuration)
   3. Configuration inheritance chain (org -> team -> user) is computed and returned
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: User dashboard aggregation service
-- [ ] 05-02: Effective configuration computation (inheritance chain)
-- [ ] 05-03: User profile REST endpoints
+- [ ] 05-01-PLAN.md — Domain entity (EffectiveConfiguration) and UserProfileService with aggregation + inheritance
+- [ ] 05-02-PLAN.md — Profile REST endpoints (/dashboard, /available-items, /effective-configuration) and DI
 
 ### Phase 6: Web Frontend Core
 **Goal**: Web UI enables authentication, catalog browsing, and profile viewing
@@ -197,7 +196,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 2. Authentication | 3/3 | Complete | 2026-01-23 |
 | 3. Catalog Backend | 2/2 | Complete | 2026-01-24 |
 | 4. Configuration Backend | 3/3 | Complete | 2026-01-24 |
-| 5. User Profiles Backend | 0/3 | Not started | - |
+| 5. User Profiles Backend | 0/2 | Not started | - |
 | 6. Web Frontend Core | 0/5 | Not started | - |
 | 7. Web Frontend Configuration | 0/5 | Not started | - |
 | 8. CLI Sync Tool | 0/5 | Not started | - |
@@ -205,5 +204,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 ---
 *Roadmap created: 2025-01-23*
-*Total plans: 36*
+*Total plans: 35*
 *Total requirements: 32*
