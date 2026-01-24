@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 6 - Web Frontend Core (Plan 2 of 5 complete)
+**Current focus:** Phase 6 - Web Frontend Core (Plan 4 of 5 complete)
 
 ## Current Position
 
 Phase: 6 of 9 (Web Frontend Core)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-24 - Completed 06-02-PLAN.md
+Last activity: 2026-01-24 - Completed 06-02, 06-03, 06-05 (parallel wave 2)
 
-Progress: [========..] 50%
+Progress: [=========.] 56%
 
 ## Phase 6 Progress
 
@@ -26,9 +26,9 @@ Progress: [========..] 50%
 |------|------|----------------|--------|
 | 06-01 | 1 | Project setup, API client, dark theme | COMPLETE |
 | 06-02 | 2 | Auth pages (login, signup, password reset) | COMPLETE |
-| 06-03 | 2 | Catalog browser with cards and filters | Pending |
+| 06-03 | 2 | Catalog browser with cards and filters | COMPLETE |
 | 06-04 | 3 | Catalog detail page with documentation | Pending |
-| 06-05 | 2 | User dashboard | Pending |
+| 06-05 | 2 | User dashboard | COMPLETE |
 
 **Key docs:**
 - `.planning/phases/06-web-frontend-core/06-CONTEXT.md` - User decisions
@@ -38,9 +38,9 @@ Progress: [========..] 50%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 19
 - Average duration: 3.6 min
-- Total execution time: 1.05 hours
+- Total execution time: 1.21 hours
 
 **By Phase:**
 
@@ -51,11 +51,11 @@ Progress: [========..] 50%
 | 3 | 2 | 8 min | 4.0 min |
 | 4 | 3 | 8 min | 2.7 min |
 | 5 | 2 | 6 min | 3.0 min |
-| 6 | 2 | 14 min | 7.0 min |
+| 6 | 4 | 24 min | 6.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (3 min), 05-02 (3 min), 06-01 (10 min), 06-02 (4 min)
-- Trend: 06-02 faster as foundational work complete
+- Last 5 plans: 06-01 (10 min), 06-02 (4 min), 06-03 (5 min), 06-05 (5 min)
+- Trend: Wave 2 plans running in parallel completed efficiently
 
 *Updated after each plan completion*
 
@@ -125,6 +125,10 @@ Recent decisions affecting current work:
 - [06-02]: Forgot password toggles form in place rather than separate route
 - [06-02]: Registration shows success screen, requires manual login afterward
 - [06-02]: Reset password validates token from URL query param
+- [06-03]: Feature directory structure (features/catalog/ with api/, hooks/, components/)
+- [06-03]: CatalogQueryParams renamed from CatalogFilters to avoid component name conflict
+- [06-03]: Type-colored badges (blue SKILL, purple MCP, green TOOL)
+- [06-03]: RootLayout wraps all app routes (catalog, dashboard, settings)
 
 ### Pending Todos
 
@@ -201,6 +205,6 @@ Profile API endpoints:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 06-02-PLAN.md (Auth pages)
+Stopped at: Completed 06-03-PLAN.md (Catalog browser)
 Resume file: None
-Next: Continue Phase 6 with 06-03 (catalog), 06-04 (detail), 06-05 (dashboard)
+Next: Continue Phase 6 with 06-04 (catalog detail)
