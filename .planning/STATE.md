@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 5 In Progress - User Profiles Backend
+**Current focus:** Phase 5 Complete - User Profiles Backend
 
 ## Current Position
 
 Phase: 5 of 9 (User Profiles Backend)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2025-01-24 - Completed 05-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2025-01-24 - Completed 05-02-PLAN.md
 
-Progress: [=======...] 39%
+Progress: [========..] 44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 3.4 min
-- Total execution time: 0.82 hours
+- Total execution time: 0.87 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [=======...] 39%
 | 2 | 3 | 12 min | 4.0 min |
 | 3 | 2 | 8 min | 4.0 min |
 | 4 | 3 | 8 min | 2.7 min |
-| 5 | 1 | 3 min | 3.0 min |
+| 5 | 2 | 6 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (4 min), 04-01 (2 min), 04-02 (3 min), 04-03 (3 min), 05-01 (3 min)
+- Last 5 plans: 04-01 (2 min), 04-02 (3 min), 04-03 (3 min), 05-01 (3 min), 05-02 (3 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -94,6 +94,9 @@ Recent decisions affecting current work:
 - [05-01]: Configuration sections merged with --- separator and # headers for org/team/user
 - [05-01]: get_available_items returns empty list if user doesn't exist (graceful degradation)
 - [05-01]: asyncio.gather for parallel repository fetches in service methods
+- [05-02]: EffectiveConfigurationResponse shows boolean flags for org/team/user applied
+- [05-02]: Available-items filter uses Query param with Optional[CatalogItemType]
+- [05-02]: UserNotFoundError returns 404 on dashboard (vs empty list for available-items)
 
 ### Pending Todos
 
@@ -154,9 +157,22 @@ Configuration API endpoints:
 - POST /api/v1/configuration/me/rollback/{sha} - rollback
 - POST /api/v1/configuration/me/import - file upload
 
+## Phase 5 Completion Summary
+
+All success criteria from ROADMAP.md are met:
+
+1. API returns user dashboard with teams, item counts, config status (05-02)
+2. API returns available catalog items for user (05-02)
+3. API returns effective configuration with inheritance (05-02)
+
+Profile API endpoints:
+- GET /api/v1/profile/dashboard - user dashboard data
+- GET /api/v1/profile/available-items - catalog items with optional type filter
+- GET /api/v1/profile/effective-configuration - merged config with source breakdown
+
 ## Session Continuity
 
 Last session: 2025-01-24
-Stopped at: Completed 05-01-PLAN.md (UserProfileService)
+Stopped at: Completed 05-02-PLAN.md (Profile API Routes)
 Resume file: None
-Next: 05-02-PLAN.md (API Routes)
+Next: Phase 6 (CLI Sync)
