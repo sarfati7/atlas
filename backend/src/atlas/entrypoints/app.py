@@ -10,6 +10,7 @@ from atlas.entrypoints.api.routes import (
     auth_router,
     catalog_router,
     configuration_router,
+    profile_router,
     sync_router,
     webhooks_router,
 )
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.include_router(auth_router, prefix="/api/v1")
     app.include_router(catalog_router, prefix="/api/v1")
     app.include_router(configuration_router, prefix="/api/v1")
+    app.include_router(profile_router, prefix="/api/v1")
     app.include_router(sync_router, prefix="/api/v1")
     app.include_router(webhooks_router, prefix="/api/v1")
 
