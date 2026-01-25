@@ -5,46 +5,47 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 7 Ready - Web Frontend Configuration
+**Current focus:** Phase 8 - CLI Sync Tool
 
 ## Current Position
 
-Phase: 7 of 9 (Web Frontend Configuration)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-01-25 - Completed 07-05-PLAN.md
+Phase: 8 of 9 (CLI Sync Tool)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-25 - Completed 08-01-PLAN.md
 
-Progress: [========..] 78%
+Progress: [========..] 80%
 
-## Phase 7 Handoff
+## Phase 8 Handoff
 
-**What:** Configuration editor UI with version history and rollback
-**Tech stack:** Same as Phase 6 (Vite + React 18 + TypeScript + TanStack Query + shadcn/ui)
-**Builds on:** Phase 6 frontend + Phase 4 configuration backend
+**What:** CLI tool to sync configuration from Atlas to local ~/.claude/CLAUDE.md
+**Tech stack:** Python, Typer, httpx, keyring, rich
+**Builds on:** Phase 2 auth (JWT tokens), Phase 5 profile API (effective-configuration)
 
 **Success criteria:**
-1. User can edit claude.md configuration through web editor
-2. User can view version history of configuration changes
-3. User can rollback to any previous version
-4. User can import existing claude.md file
-5. Configuration inheritance is visible (org/team/user)
+1. CLI installs with single command
+2. User can authenticate via browser OAuth flow
+3. User can sync configuration to ~/.claude/CLAUDE.md
+4. Sync uses atomic writes (no partial files on interrupt)
+5. CLI shows helpful error messages
 
-**Backend endpoints available:**
-- GET /api/v1/configuration/me - get current config
-- PUT /api/v1/configuration/me - update config
-- GET /api/v1/configuration/me/history - version history
-- POST /api/v1/configuration/me/rollback/{sha} - rollback
-- POST /api/v1/configuration/me/import - file upload
-- GET /api/v1/profile/effective-configuration - inheritance info
+**Backend endpoints used:**
+- POST /api/v1/auth/login - token exchange
+- POST /api/v1/auth/refresh - token refresh
+- GET /api/v1/profile/effective-configuration - get merged config
 
-**To plan:** `/gsd:plan-phase 7`
+**CLI commands planned:**
+- atlas login - authenticate via browser
+- atlas sync - sync config to local file
+- atlas logout - clear credentials
+- atlas status - show current state
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
+- Total plans completed: 26
 - Average duration: 3.5 min
-- Total execution time: 1.45 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -57,10 +58,11 @@ Progress: [========..] 78%
 | 5 | 2 | 6 min | 3.0 min |
 | 6 | 5 | 26 min | 5.2 min |
 | 7 | 5 | 19 min | 3.8 min |
+| 8 | 1 | 3 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (3 min), 07-02 (6 min), 07-03 (2 min), 07-04 (4 min), 07-05 (4 min)
-- Trend: Phase 7 complete, consistent execution pace
+- Last 5 plans: 07-03 (2 min), 07-04 (4 min), 07-05 (4 min), 08-01 (3 min)
+- Trend: Phase 8 started, consistent execution pace
 
 *Updated after each plan completion*
 
@@ -156,6 +158,10 @@ Recent decisions affecting current work:
 - [07-05]: react-dropzone for drag-and-drop file upload (stable, well-maintained)
 - [07-05]: Replace/Append merge dialog when importing with existing content
 - [07-05]: Three badges (org/team/personal) with opacity for inactive sources
+- [08-01]: Typer for CLI framework (simple, type-hint driven)
+- [08-01]: Keyring for OS-native secure credential storage
+- [08-01]: Atomic write pattern with temp file + rename for safety
+- [08-01]: CLI module structure: commands/, api/, storage/
 
 ### Pending Todos
 
@@ -268,6 +274,6 @@ Frontend Settings page:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-05-PLAN.md (Phase 7 complete)
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
-Next: Plan Phase 8
+Next: Execute 08-02-PLAN.md (Auth commands)
