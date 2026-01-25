@@ -9,64 +9,42 @@ from fastapi.security import OAuth2PasswordBearer
 from atlas.adapters.auth.jwt_auth_service import JWTAuthService
 from atlas.adapters.authorization.permissive import PermissiveAuthorizationService
 from atlas.adapters.github.content_repository import GitHubContentRepository
-from atlas.adapters.postgresql.repositories import (
-    PostgresCatalogRepository,
-    PostgresConfigurationRepository,
-    PostgresTeamRepository,
-    PostgresUserRepository,
-)
-from atlas.application.services import ConfigurationService, UserProfileService
+from atlas.adapters.postgresql.repository import Repository
 from atlas.adapters.postgresql.session import AsyncSession, get_session
 from atlas.adapters.sync import GitCatalogSyncService
+from atlas.application.services import ConfigurationService, UserProfileService
 from atlas.config import settings
 from atlas.domain.entities.user import User
 from atlas.domain.interfaces import (
     AbstractAuthService,
     AbstractAuthorizationService,
-    AbstractCatalogRepository,
-    AbstractConfigurationRepository,
     AbstractContentRepository,
-    AbstractEmailService,
     AbstractSyncService,
-    AbstractTeamRepository,
-    AbstractUserRepository,
 )
+from atlas.domain.interfaces.repository import AbstractRepository
 
 # OAuth2 scheme for Bearer token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-# Repository dependencies
+# -----------------------------------------------------------------------------
+# Repository dependency (unified)
+# -----------------------------------------------------------------------------
 
-async def get_user_repository(
+async def get_repository(
     session: Annotated[AsyncSession, Depends(get_session)]
-) -> AbstractUserRepository:
-    """Provide user repository implementation."""
-    return PostgresUserRepository(session)
+) -> AbstractRepository:
+    """Provide unified repository implementation."""
+    return Repository(session)
 
 
-async def get_team_repository(
-    session: Annotated[AsyncSession, Depends(get_session)]
-) -> AbstractTeamRepository:
-    """Provide team repository implementation."""
-    return PostgresTeamRepository(session)
+# Type alias for cleaner route signatures
+Repo = Annotated[AbstractRepository, Depends(get_repository)]
 
 
-async def get_catalog_repository(
-    session: Annotated[AsyncSession, Depends(get_session)]
-) -> AbstractCatalogRepository:
-    """Provide catalog repository implementation."""
-    return PostgresCatalogRepository(session)
-
-
-async def get_configuration_repository(
-    session: Annotated[AsyncSession, Depends(get_session)]
-) -> AbstractConfigurationRepository:
-    """Provide configuration repository implementation."""
-    return PostgresConfigurationRepository(session)
-
-
-# Content repository (conditional on config)
+# -----------------------------------------------------------------------------
+# Content repository (GitHub or in-memory based on config)
+# -----------------------------------------------------------------------------
 
 async def get_content_repository() -> AbstractContentRepository:
     """
@@ -77,12 +55,16 @@ async def get_content_repository() -> AbstractContentRepository:
     """
     if settings.github_token and settings.github_repo:
         return GitHubContentRepository(settings.github_token, settings.github_repo)
-    # Fallback to in-memory for development without GitHub config
     from atlas.adapters.in_memory.content_repository import InMemoryContentRepository
     return InMemoryContentRepository()
 
 
+ContentRepo = Annotated[AbstractContentRepository, Depends(get_content_repository)]
+
+
+# -----------------------------------------------------------------------------
 # Authorization service
+# -----------------------------------------------------------------------------
 
 async def get_authorization_service() -> AbstractAuthorizationService:
     """
@@ -94,56 +76,62 @@ async def get_authorization_service() -> AbstractAuthorizationService:
     return PermissiveAuthorizationService()
 
 
-# Sync service
+AuthorizationSvc = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
 
-# System author ID for items created via sync (webhook/automated)
+
+# -----------------------------------------------------------------------------
+# Sync service
+# -----------------------------------------------------------------------------
+
 SYSTEM_AUTHOR_ID = UUID("00000000-0000-0000-0000-000000000000")
 
 
 async def get_sync_service(
-    content_repo: Annotated[AbstractContentRepository, Depends(get_content_repository)],
-    catalog_repo: Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)],
+    content_repo: ContentRepo,
+    repo: Repo,
 ) -> AbstractSyncService:
-    """
-    Provide sync service implementation.
-
-    Uses system author ID for items created via webhook or automated sync.
-    """
-    return GitCatalogSyncService(content_repo, catalog_repo, SYSTEM_AUTHOR_ID)
+    """Provide sync service implementation."""
+    return GitCatalogSyncService(content_repo, repo, SYSTEM_AUTHOR_ID)
 
 
+SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
+
+
+# -----------------------------------------------------------------------------
 # Configuration service
+# -----------------------------------------------------------------------------
 
 async def get_configuration_service(
-    config_repo: Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)],
-    content_repo: Annotated[AbstractContentRepository, Depends(get_content_repository)],
+    repo: Repo,
+    content_repo: ContentRepo,
 ) -> ConfigurationService:
     """Provide configuration service implementation."""
-    return ConfigurationService(config_repo, content_repo)
+    return ConfigurationService(repo, content_repo)
 
 
+ConfigService = Annotated[ConfigurationService, Depends(get_configuration_service)]
+
+
+# -----------------------------------------------------------------------------
 # User profile service
+# -----------------------------------------------------------------------------
 
 async def get_user_profile_service(
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
-    team_repo: Annotated[AbstractTeamRepository, Depends(get_team_repository)],
-    catalog_repo: Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)],
-    config_repo: Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)],
-    content_repo: Annotated[AbstractContentRepository, Depends(get_content_repository)],
+    repo: Repo,
+    content_repo: ContentRepo,
 ) -> UserProfileService:
     """Provide user profile service implementation."""
-    return UserProfileService(
-        user_repo=user_repo,
-        team_repo=team_repo,
-        catalog_repo=catalog_repo,
-        config_repo=config_repo,
-        content_repo=content_repo,
-    )
+    return UserProfileService(repo=repo, content_repo=content_repo)
 
 
-# Email service (conditional on config)
+ProfileService = Annotated[UserProfileService, Depends(get_user_profile_service)]
 
-async def get_email_service() -> AbstractEmailService:
+
+# -----------------------------------------------------------------------------
+# Email service
+# -----------------------------------------------------------------------------
+
+async def get_email_service():
     """
     Provide email service implementation.
 
@@ -159,19 +147,19 @@ async def get_email_service() -> AbstractEmailService:
             smtp_password=settings.smtp_password,
             email_from=settings.email_from,
         )
-    # Fallback to console for development without SMTP config
     from atlas.adapters.email.console_email_service import ConsoleEmailService
     return ConsoleEmailService()
 
 
-# Authentication service (JWT + password hashing)
+EmailSvc = Annotated[AbstractAuthorizationService, Depends(get_email_service)]
+
+
+# -----------------------------------------------------------------------------
+# Authentication service
+# -----------------------------------------------------------------------------
 
 def get_auth_service() -> AbstractAuthService:
-    """
-    Provide authentication service implementation.
-
-    Returns JWTAuthService configured with application settings.
-    """
+    """Provide authentication service implementation."""
     return JWTAuthService(
         secret_key=settings.secret_key,
         access_token_expire_minutes=settings.access_token_expire_minutes,
@@ -179,20 +167,22 @@ def get_auth_service() -> AbstractAuthService:
     )
 
 
+AuthenticationSvc = Annotated[AbstractAuthService, Depends(get_auth_service)]
+
+
+# -----------------------------------------------------------------------------
 # Current user dependencies
+# -----------------------------------------------------------------------------
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    auth_service: AuthenticationSvc,
+    repo: Repo,
 ) -> User:
     """
     Get the current authenticated user from JWT token.
 
     Validates the Bearer token and returns the associated User entity.
-
-    Raises:
-        HTTPException 401: If token is invalid, expired, or user not found
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -200,12 +190,10 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    # Verify token and extract payload
     payload = auth_service.verify_token(token)
     if payload is None:
         raise credentials_exception
 
-    # Extract user ID from token subject
     user_id_str = payload.get("sub")
     if user_id_str is None:
         raise credentials_exception
@@ -215,8 +203,7 @@ async def get_current_user(
     except ValueError:
         raise credentials_exception
 
-    # Fetch user from repository
-    user = await user_repo.get_by_id(user_id)
+    user = await repo.get_user_by_id(user_id)
     if user is None:
         raise credentials_exception
 
@@ -225,26 +212,21 @@ async def get_current_user(
 
 async def get_current_user_optional(
     token: Annotated[Optional[str], Depends(OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False))],
-    auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    auth_service: AuthenticationSvc,
+    repo: Repo,
 ) -> Optional[User]:
     """
     Get the current authenticated user if a valid token is provided.
 
-    Unlike get_current_user, this returns None instead of raising 401
-    when no token is provided or the token is invalid.
-
-    Useful for routes that work both with and without authentication.
+    Returns None instead of raising 401 when no token or invalid token.
     """
     if token is None:
         return None
 
-    # Verify token and extract payload
     payload = auth_service.verify_token(token)
     if payload is None:
         return None
 
-    # Extract user ID from token subject
     user_id_str = payload.get("sub")
     if user_id_str is None:
         return None
@@ -254,27 +236,11 @@ async def get_current_user_optional(
     except ValueError:
         return None
 
-    # Fetch user from repository
-    user = await user_repo.get_by_id(user_id)
-    return user
+    return await repo.get_user_by_id(user_id)
 
 
-# Type aliases for cleaner route signatures
-UserRepo = Annotated[AbstractUserRepository, Depends(get_user_repository)]
-TeamRepo = Annotated[AbstractTeamRepository, Depends(get_team_repository)]
-CatalogRepo = Annotated[AbstractCatalogRepository, Depends(get_catalog_repository)]
-ContentRepo = Annotated[AbstractContentRepository, Depends(get_content_repository)]
-AuthorizationSvc = Annotated[AbstractAuthorizationService, Depends(get_authorization_service)]
-AuthenticationSvc = Annotated[AbstractAuthService, Depends(get_auth_service)]
-EmailSvc = Annotated[AbstractEmailService, Depends(get_email_service)]
-SyncService = Annotated[AbstractSyncService, Depends(get_sync_service)]
-ConfigRepo = Annotated[AbstractConfigurationRepository, Depends(get_configuration_repository)]
-ConfigService = Annotated[ConfigurationService, Depends(get_configuration_service)]
-ProfileService = Annotated[UserProfileService, Depends(get_user_profile_service)]
-
-# Current user type aliases
 CurrentUser = Annotated[User, Depends(get_current_user)]
 CurrentUserOptional = Annotated[Optional[User], Depends(get_current_user_optional)]
 
-# Backwards compatibility - AuthService was previously used for authorization
+# Backwards compatibility alias
 AuthService = AuthorizationSvc

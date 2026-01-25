@@ -5,8 +5,8 @@ from typing import Optional
 from uuid import UUID
 
 from atlas.domain.entities.catalog_item import CatalogItem, CatalogItemType
-from atlas.domain.interfaces.catalog_repository import AbstractCatalogRepository
 from atlas.domain.interfaces.content_repository import AbstractContentRepository
+from atlas.domain.interfaces.repository import AbstractRepository
 from atlas.domain.interfaces.sync_service import AbstractSyncService, SyncResult
 
 
@@ -28,7 +28,7 @@ class GitCatalogSyncService(AbstractSyncService):
     def __init__(
         self,
         content_repo: AbstractContentRepository,
-        catalog_repo: AbstractCatalogRepository,
+        repo: AbstractRepository,
         default_author_id: UUID,
     ) -> None:
         """
@@ -36,11 +36,11 @@ class GitCatalogSyncService(AbstractSyncService):
 
         Args:
             content_repo: Repository for git content operations
-            catalog_repo: Repository for catalog metadata operations
+            repo: Repository for database operations
             default_author_id: UUID to use as author for items created via sync
         """
         self._content_repo = content_repo
-        self._catalog_repo = catalog_repo
+        self._repo = repo
         self._default_author_id = default_author_id
 
     async def sync_all(self) -> SyncResult:
@@ -70,7 +70,7 @@ class GitCatalogSyncService(AbstractSyncService):
 
         # Get all existing catalog items
         try:
-            existing_items = await self._catalog_repo.list_all()
+            existing_items = await self._repo.list_catalog_items()
         except Exception as e:
             errors.append(f"Failed to list catalog items: {e}")
             return SyncResult(created=0, updated=0, deleted=0, errors=errors)
@@ -89,7 +89,7 @@ class GitCatalogSyncService(AbstractSyncService):
                 if item_type is None:
                     continue  # Skip files not in recognized directories
                 item = self._create_catalog_item(path, item_type)
-                await self._catalog_repo.save(item)
+                await self._repo.save_catalog_item(item)
                 created += 1
             except Exception as e:
                 errors.append(f"Failed to create item for {path}: {e}")
@@ -99,7 +99,7 @@ class GitCatalogSyncService(AbstractSyncService):
         for path in paths_to_delete:
             try:
                 item = existing_by_path[path]
-                await self._catalog_repo.delete(item.id)
+                await self._repo.delete_catalog_item(item.id)
                 deleted += 1
             except Exception as e:
                 errors.append(f"Failed to delete item for {path}: {e}")
@@ -115,7 +115,7 @@ class GitCatalogSyncService(AbstractSyncService):
                 # For now, we just touch updated_at on each sync
                 # A more sophisticated approach would store and compare SHAs
                 existing_item.updated_at = datetime.utcnow()
-                await self._catalog_repo.save(existing_item)
+                await self._repo.save_catalog_item(existing_item)
                 updated += 1
             except Exception as e:
                 errors.append(f"Failed to update item for {path}: {e}")
@@ -143,21 +143,21 @@ class GitCatalogSyncService(AbstractSyncService):
                 file_exists = await self._content_repo.exists(path)
 
                 # Check if item exists in database
-                existing_item = await self._catalog_repo.get_by_git_path(path)
+                existing_item = await self._repo.get_catalog_item_by_git_path(path)
 
                 if file_exists and existing_item is None:
                     # Create new item
                     item = self._create_catalog_item(path, item_type)
-                    await self._catalog_repo.save(item)
+                    await self._repo.save_catalog_item(item)
                     created += 1
                 elif file_exists and existing_item is not None:
                     # Update existing item
                     existing_item.updated_at = datetime.utcnow()
-                    await self._catalog_repo.save(existing_item)
+                    await self._repo.save_catalog_item(existing_item)
                     updated += 1
                 elif not file_exists and existing_item is not None:
                     # Delete item
-                    await self._catalog_repo.delete(existing_item.id)
+                    await self._repo.delete_catalog_item(existing_item.id)
                     deleted += 1
                 # else: file doesn't exist and item doesn't exist - nothing to do
 

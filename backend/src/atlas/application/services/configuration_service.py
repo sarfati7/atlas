@@ -5,10 +5,8 @@ from typing import Optional
 from uuid import UUID, uuid4
 
 from atlas.domain.entities import ConfigurationVersion, UserConfiguration
-from atlas.domain.interfaces import (
-    AbstractConfigurationRepository,
-    AbstractContentRepository,
-)
+from atlas.domain.interfaces import AbstractContentRepository
+from atlas.domain.interfaces.repository import AbstractRepository
 
 
 class ConfigurationNotFoundError(Exception):
@@ -33,10 +31,10 @@ class ConfigurationService:
 
     def __init__(
         self,
-        config_repo: AbstractConfigurationRepository,
+        repo: AbstractRepository,
         content_repo: AbstractContentRepository,
     ) -> None:
-        self._config_repo = config_repo
+        self._repo = repo
         self._content_repo = content_repo
 
     def _get_user_config_path(self, user_id: UUID) -> str:
@@ -50,7 +48,7 @@ class ConfigurationService:
         Returns tuple of (content, metadata).
         Returns empty content if user has no configuration yet.
         """
-        config = await self._config_repo.get_by_user_id(user_id)
+        config = await self._repo.get_configuration_by_user_id(user_id)
 
         if config is None:
             # No config exists yet - return empty content with placeholder metadata
@@ -91,7 +89,7 @@ class ConfigurationService:
         )
 
         # Get or create database record
-        config = await self._config_repo.get_by_user_id(user_id)
+        config = await self._repo.get_configuration_by_user_id(user_id)
         if config is None:
             config = UserConfiguration(
                 id=uuid4(),
@@ -112,7 +110,7 @@ class ConfigurationService:
             )
 
         # Save metadata to database
-        return await self._config_repo.save(config)
+        return await self._repo.save_configuration(config)
 
     async def get_version_history(
         self,
@@ -124,7 +122,7 @@ class ConfigurationService:
 
         Returns empty list if no configuration exists yet.
         """
-        config = await self._config_repo.get_by_user_id(user_id)
+        config = await self._repo.get_configuration_by_user_id(user_id)
         if config is None:
             return []
 
@@ -143,7 +141,7 @@ class ConfigurationService:
 
         Gets content from historical commit and saves as new commit.
         """
-        config = await self._config_repo.get_by_user_id(user_id)
+        config = await self._repo.get_configuration_by_user_id(user_id)
         if config is None:
             raise ConfigurationNotFoundError(f"No configuration for user {user_id}")
 

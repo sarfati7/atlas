@@ -128,20 +128,29 @@
 - **Interfaces** are abstract classes that define what a component needs (also called "ports" in hexagonal architecture)
 - **Implementations** are concrete classes that fulfill those interfaces
 - **Naming convention**: Abstract classes prefixed with `Abstract`, implementations are not
-- Every interface should have at least two implementations:
-  1. **Real implementation** - Production logic (e.g., `MongoUserRepository`, `StripePaymentGateway`)
-  2. **Test implementation** - In-memory/fake version (e.g., `InMemoryUserRepository`, `FakePaymentGateway`)
 - Services depend on the interface, never on concrete implementations
-- This allows testing the full application flow without real databases, APIs, or external services
+
+### Repository Pattern - Keep It Simple
+- **One unified repository** per database - don't split into separate repos per entity (e.g., UserRepository, TeamRepository, CatalogRepository)
+- A single `AbstractRepository` interface contains methods for all entities
+- A single `Repository` class implements all database operations
+- For testing, use the same `Repository` class with SQLite in-memory database (SQLAlchemy abstracts the difference)
+- Only split into separate repos when there's a clear need (different databases, different scaling requirements)
 
 ```
-# Example structure:
-domain/interfaces/user_repository.py  # AbstractUserRepository (abstract class)
-adapters/mongodb/user_repository.py   # MongoUserRepository(AbstractUserRepository)
-adapters/in_memory/user_repository.py # InMemoryUserRepository(AbstractUserRepository)
+# Correct - unified repository:
+domain/interfaces/repository.py       # AbstractRepository (all entities)
+adapters/postgresql/repository.py     # Repository(AbstractRepository)
 
-# In production: inject MongoUserRepository
-# In tests: inject InMemoryUserRepository
+# In production: PostgreSQL connection string
+# In tests: SQLite in-memory via pytest fixture
+
+# Avoid - over-engineered:
+domain/interfaces/user_repository.py      # Too granular
+domain/interfaces/team_repository.py      # Creates unnecessary files
+domain/interfaces/catalog_repository.py   # Harder to maintain
+adapters/postgresql/user_repository.py    # More files = more complexity
+adapters/in_memory/user_repository.py     # Duplicate implementations
 ```
 
 ### SOLID Principles

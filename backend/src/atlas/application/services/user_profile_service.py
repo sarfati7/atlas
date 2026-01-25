@@ -7,19 +7,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from atlas.domain.entities import (
-    CatalogItem,
-    CatalogItemType,
-    EffectiveConfiguration,
-    Team,
-)
-from atlas.domain.interfaces import (
-    AbstractCatalogRepository,
-    AbstractConfigurationRepository,
-    AbstractContentRepository,
-    AbstractTeamRepository,
-    AbstractUserRepository,
-)
+from atlas.domain.entities import CatalogItem, CatalogItemType, EffectiveConfiguration, Team
+from atlas.domain.interfaces import AbstractContentRepository
+from atlas.domain.interfaces.repository import AbstractRepository
 
 
 # Well-known configuration paths
@@ -67,7 +57,7 @@ class UserProfileService:
     """
     Service layer for user profile operations.
 
-    Aggregates data from multiple repositories to provide:
+    Aggregates data from repository to provide:
     - Dashboard summary (user info, teams, item counts, config status)
     - Available items filtered by team membership
     - Effective configuration merged from org/team/user levels
@@ -75,16 +65,10 @@ class UserProfileService:
 
     def __init__(
         self,
-        user_repo: AbstractUserRepository,
-        team_repo: AbstractTeamRepository,
-        catalog_repo: AbstractCatalogRepository,
-        config_repo: AbstractConfigurationRepository,
+        repo: AbstractRepository,
         content_repo: AbstractContentRepository,
     ) -> None:
-        self._user_repo = user_repo
-        self._team_repo = team_repo
-        self._catalog_repo = catalog_repo
-        self._config_repo = config_repo
+        self._repo = repo
         self._content_repo = content_repo
 
     def _get_team_config_path(self, team_id: UUID) -> str:
@@ -117,16 +101,16 @@ class UserProfileService:
         Fetches user info, teams, available item counts, and config status.
         Uses parallel fetches where possible for performance.
         """
-        user = await self._user_repo.get_by_id(user_id)
+        user = await self._repo.get_user_by_id(user_id)
         if user is None:
             raise UserNotFoundError(f"User {user_id} not found")
 
         # Parallel fetch: teams, all items, user config
         teams_task = asyncio.gather(
-            *[self._team_repo.get_by_id(tid) for tid in user.team_ids]
+            *[self._repo.get_team_by_id(tid) for tid in user.team_ids]
         )
-        items_task = self._catalog_repo.list()
-        config_task = self._config_repo.get_by_user_id(user_id)
+        items_task = self._repo.list_catalog_items()
+        config_task = self._repo.get_configuration_by_user_id(user_id)
 
         teams_results, all_items, config = await asyncio.gather(
             teams_task, items_task, config_task
@@ -164,11 +148,11 @@ class UserProfileService:
         Returns items that are company-wide (team_id=None) or belong to user's teams.
         Returns empty list if user doesn't exist (graceful degradation).
         """
-        user = await self._user_repo.get_by_id(user_id)
+        user = await self._repo.get_user_by_id(user_id)
         if user is None:
             return []
 
-        all_items = await self._catalog_repo.list()
+        all_items = await self._repo.list_catalog_items()
         available_items = self._filter_available_items(all_items, user.team_ids)
 
         return [
@@ -190,18 +174,17 @@ class UserProfileService:
         Fetches configuration content from all levels and merges with section markers.
         Missing configs are treated as empty strings.
         """
-        # Fetch user's teams and config metadata in parallel
-        user = await self._user_repo.get_by_id(user_id)
+        user = await self._repo.get_user_by_id(user_id)
         if user is None:
-            # Return empty configuration for non-existent user
             return EffectiveConfiguration(
                 content="", org_content="", team_content="", user_content=""
             )
 
+        # Parallel fetch: teams and user config
         teams_task = asyncio.gather(
-            *[self._team_repo.get_by_id(tid) for tid in user.team_ids]
+            *[self._repo.get_team_by_id(tid) for tid in user.team_ids]
         )
-        config_task = self._config_repo.get_by_user_id(user_id)
+        config_task = self._repo.get_configuration_by_user_id(user_id)
 
         teams_results, config = await asyncio.gather(teams_task, config_task)
         teams: list[Team] = [t for t in teams_results if t is not None]
@@ -230,7 +213,7 @@ class UserProfileService:
 
         # Process results
         org_content = ""
-        team_contents: list[tuple[str, str]] = []  # (team_name, content)
+        team_contents: list[tuple[str, str]] = []
         user_content = ""
 
         for i, (key_type, key_name) in enumerate(content_keys):

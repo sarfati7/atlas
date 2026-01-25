@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel
 
 from atlas.domain.entities.catalog_item import CatalogItemType
-from atlas.entrypoints.dependencies import CatalogRepo, ContentRepo
+from atlas.entrypoints.dependencies import ContentRepo, Repo
 
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
@@ -69,7 +69,7 @@ def _get_readme_path(git_path: str) -> str:
 
 @router.get("", response_model=PaginatedCatalog)
 async def list_catalog(
-    catalog_repo: CatalogRepo,
+    repo: Repo,
     page: int = Query(default=1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(default=20, ge=1, le=100, description="Items per page (max 100)"),
     type: Optional[CatalogItemType] = Query(default=None, description="Filter by type"),
@@ -87,7 +87,7 @@ async def list_catalog(
     """
     offset = (page - 1) * size
 
-    result = await catalog_repo.list_paginated(
+    result = await repo.list_catalog_items_paginated(
         offset=offset,
         limit=size,
         item_type=type,
@@ -122,7 +122,7 @@ async def list_catalog(
 @router.get("/{item_id}", response_model=CatalogItemDetail)
 async def get_catalog_item(
     item_id: UUID,
-    catalog_repo: CatalogRepo,
+    repo: Repo,
     content_repo: ContentRepo,
 ) -> CatalogItemDetail:
     """
@@ -134,7 +134,7 @@ async def get_catalog_item(
     - **item_id**: UUID of the catalog item
     """
     # Get metadata from database
-    item = await catalog_repo.get_by_id(item_id)
+    item = await repo.get_catalog_item_by_id(item_id)
     if item is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

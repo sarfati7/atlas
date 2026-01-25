@@ -12,13 +12,14 @@ from slowapi.util import get_remote_address
 
 from atlas.config import settings
 from atlas.domain.entities.user import User
-from atlas.domain.interfaces import AbstractAuthService, AbstractEmailService, AbstractUserRepository
+from atlas.domain.interfaces import AbstractAuthService, AbstractEmailService
+from atlas.domain.interfaces.repository import AbstractRepository
 from atlas.domain.value_objects.password import Password
 from atlas.entrypoints.dependencies import (
     CurrentUser,
+    Repo,
     get_auth_service,
     get_email_service,
-    get_user_repository,
 )
 
 # Rate limiter for auth endpoints
@@ -88,7 +89,7 @@ async def register(
     request: Request,
     body: RegisterRequest,
     auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    repo: Repo,
 ) -> RegisterResponse:
     """
     Register a new user account.
@@ -113,7 +114,7 @@ async def register(
         )
 
     # Check for existing email
-    existing_email = await user_repo.get_by_email(body.email)
+    existing_email = await repo.get_user_by_email(body.email)
     if existing_email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -121,7 +122,7 @@ async def register(
         )
 
     # Check for existing username
-    existing_username = await user_repo.get_by_username(body.username)
+    existing_username = await repo.get_user_by_username(body.username)
     if existing_username:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -139,7 +140,7 @@ async def register(
     )
 
     # Save user
-    saved_user = await user_repo.save(user)
+    saved_user = await repo.save_user(user)
 
     return RegisterResponse(
         message="User created successfully",
@@ -157,7 +158,7 @@ async def login(
     response: Response,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    repo: Repo,
 ) -> TokenResponse:
     """
     Authenticate user and return access token.
@@ -181,7 +182,7 @@ async def login(
     )
 
     # Fetch user by email (form_data.username contains the email)
-    user = await user_repo.get_by_email(form_data.username)
+    user = await repo.get_user_by_email(form_data.username)
 
     # If user not found or has no password (OAuth-only user), fail
     if user is None or user.password_hash is None:
@@ -247,7 +248,7 @@ async def logout(
 async def refresh(
     request: Request,
     auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    repo: Repo,
     refresh_token: Annotated[str | None, Cookie()] = None,
 ) -> TokenResponse:
     """
@@ -302,7 +303,7 @@ async def refresh(
         )
 
     # Fetch user to ensure still exists
-    user = await user_repo.get_by_id(user_id)
+    user = await repo.get_user_by_id(user_id)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -350,7 +351,7 @@ async def forgot_password(
     body: ForgotPasswordRequest,
     auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
     email_service: Annotated[AbstractEmailService, Depends(get_email_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    repo: Repo,
 ) -> MessageResponse:
     """
     Request a password reset email.
@@ -365,7 +366,7 @@ async def forgot_password(
     response_message = "If that email is registered, you will receive a reset link"
 
     # Look up user by email
-    user = await user_repo.get_by_email(body.email)
+    user = await repo.get_user_by_email(body.email)
 
     if user is not None:
         # Generate password reset token (valid for 30 minutes)
@@ -389,7 +390,7 @@ async def reset_password(
     request: Request,
     body: ResetPasswordRequest,
     auth_service: Annotated[AbstractAuthService, Depends(get_auth_service)],
-    user_repo: Annotated[AbstractUserRepository, Depends(get_user_repository)],
+    repo: Repo,
 ) -> MessageResponse:
     """
     Reset password using a valid reset token.
@@ -422,7 +423,7 @@ async def reset_password(
         )
 
     # Fetch user by ID
-    user = await user_repo.get_by_id(user_id)
+    user = await repo.get_user_by_id(user_id)
 
     if user is None:
         # User was deleted after token was created
@@ -435,6 +436,6 @@ async def reset_password(
     user.password_hash = auth_service.hash_password(body.new_password)
 
     # Save updated user
-    await user_repo.save(user)
+    await repo.save_user(user)
 
     return MessageResponse(message="Password successfully reset")
