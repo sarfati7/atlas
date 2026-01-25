@@ -82,3 +82,17 @@ class AuditLogModel(SQLModel, table=True):
     resource_id: UUID
     details: dict[str, Any] = Field(default_factory=dict, sa_type=JSON)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class UsageEventModel(SQLModel, table=True):
+    """SQLModel table for usage event tracking."""
+
+    __tablename__ = "usage_events"
+
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: UUID = Field(foreign_key="users.id", index=True)
+    item_id: UUID = Field(index=True)
+    item_type: str  # SKILL, MCP, TOOL
+    action: str  # sync, view, execute
+    event_metadata: dict[str, Any] = Field(default_factory=dict, sa_type=JSON)
+    created_at: datetime = Field(default_factory=datetime.utcnow, index=True)

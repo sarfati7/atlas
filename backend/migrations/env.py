@@ -10,9 +10,11 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 # CRITICAL: Import models FIRST before SQLModel.metadata
 # This ensures all tables are registered with the metadata
-from atlas.adapters.postgresql.models import (  # noqa: F401
-    CatalogItemModel,
+from atlas.adapters.repository.models import (  # noqa: F401
+    AuditLogModel,
     TeamModel,
+    UsageEventModel,
+    UserConfigurationModel,
     UserModel,
     UserTeamLink,
 )

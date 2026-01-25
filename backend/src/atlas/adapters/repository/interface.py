@@ -1,10 +1,12 @@
 """Repository interface - Abstract contract for database operations."""
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from datetime import datetime
+from typing import Literal, Optional
 from uuid import UUID
 
-from atlas.domain.entities import AuditLog, Team, User, UserConfiguration
+from atlas.domain.entities import AuditLog, Team, User, UserConfiguration, UsageEvent, UsageStat
+from atlas.domain.entities.catalog_item import CatalogItemType
 
 
 class AbstractRepository(ABC):
@@ -142,4 +144,49 @@ class AbstractRepository(ABC):
         user_id: Optional[UUID] = None,
     ) -> int:
         """Count audit logs with optional filters."""
+        raise NotImplementedError
+
+    # -------------------------------------------------------------------------
+    # Usage event operations
+    # -------------------------------------------------------------------------
+
+    @abstractmethod
+    async def save_usage_event(self, event: UsageEvent) -> UsageEvent:
+        """Save a usage event."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_usage_events(
+        self,
+        user_id: Optional[UUID] = None,
+        item_id: Optional[UUID] = None,
+        item_type: Optional[CatalogItemType] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[UsageEvent]:
+        """Get usage events with optional filters, ordered by created_at DESC."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_usage_stats(
+        self,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        group_by: Literal["user", "item", "day"] = "day",
+    ) -> list[UsageStat]:
+        """Get aggregated usage statistics grouped by user, item, or day."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def count_usage_events(
+        self,
+        user_id: Optional[UUID] = None,
+        item_id: Optional[UUID] = None,
+        item_type: Optional[CatalogItemType] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> int:
+        """Count usage events with optional filters."""
         raise NotImplementedError

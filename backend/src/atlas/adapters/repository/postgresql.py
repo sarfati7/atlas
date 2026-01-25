@@ -1,21 +1,23 @@
 """PostgreSQL repository implementation."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from atlas.adapters.repository.interface import AbstractRepository
 from atlas.adapters.repository.models import (
     AuditLogModel,
     TeamModel,
+    UsageEventModel,
     UserConfigurationModel,
     UserModel,
     UserTeamLink,
 )
-from atlas.domain.entities import AuditLog, Team, User, UserConfiguration
+from atlas.domain.entities import AuditLog, Team, User, UsageEvent, UsageStat, UserConfiguration
+from atlas.domain.entities.catalog_item import CatalogItemType
 from atlas.domain.entities.user import UserRole
 
 
@@ -334,5 +336,139 @@ class PostgreSQLRepository(AbstractRepository):
             resource_type=model.resource_type,
             resource_id=model.resource_id,
             details=model.details if model.details else {},
+            created_at=model.created_at,
+        )
+
+    # -------------------------------------------------------------------------
+    # Usage event operations
+    # -------------------------------------------------------------------------
+
+    async def save_usage_event(self, event: UsageEvent) -> UsageEvent:
+        model = UsageEventModel(
+            id=event.id,
+            user_id=event.user_id,
+            item_id=event.item_id,
+            item_type=event.item_type.value,
+            action=event.action,
+            event_metadata=event.metadata,
+            created_at=event.created_at,
+        )
+        self._session.add(model)
+        await self._session.commit()
+
+        statement = select(UsageEventModel).where(UsageEventModel.id == event.id)
+        result = await self._session.execute(statement)
+        saved_model = result.scalar_one()
+        return self._usage_event_to_entity(saved_model)
+
+    async def get_usage_events(
+        self,
+        user_id: Optional[UUID] = None,
+        item_id: Optional[UUID] = None,
+        item_type: Optional[CatalogItemType] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[UsageEvent]:
+        statement = select(UsageEventModel)
+
+        if user_id is not None:
+            statement = statement.where(UsageEventModel.user_id == user_id)
+        if item_id is not None:
+            statement = statement.where(UsageEventModel.item_id == item_id)
+        if item_type is not None:
+            statement = statement.where(UsageEventModel.item_type == item_type.value)
+        if start_date is not None:
+            statement = statement.where(UsageEventModel.created_at >= start_date)
+        if end_date is not None:
+            statement = statement.where(UsageEventModel.created_at <= end_date)
+
+        statement = statement.order_by(UsageEventModel.created_at.desc())
+        statement = statement.offset(offset).limit(limit)
+
+        result = await self._session.execute(statement)
+        models = result.scalars().all()
+        return [self._usage_event_to_entity(m) for m in models]
+
+    async def get_usage_stats(
+        self,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        group_by: Literal["user", "item", "day"] = "day",
+    ) -> list[UsageStat]:
+        if group_by == "user":
+            key_column = UsageEventModel.user_id
+            statement = select(
+                key_column,
+                func.count(UsageEventModel.id).label("count"),
+            ).group_by(key_column)
+        elif group_by == "item":
+            statement = select(
+                UsageEventModel.item_id,
+                func.count(UsageEventModel.id).label("count"),
+                UsageEventModel.item_type,
+            ).group_by(UsageEventModel.item_id, UsageEventModel.item_type)
+        else:  # day
+            statement = select(
+                func.date(UsageEventModel.created_at).label("date"),
+                func.count(UsageEventModel.id).label("count"),
+            ).group_by(func.date(UsageEventModel.created_at))
+
+        if start_date is not None:
+            statement = statement.where(UsageEventModel.created_at >= start_date)
+        if end_date is not None:
+            statement = statement.where(UsageEventModel.created_at <= end_date)
+
+        result = await self._session.execute(statement)
+        rows = result.all()
+
+        stats = []
+        for row in rows:
+            if group_by == "item":
+                stats.append(UsageStat(
+                    key=str(row[0]),
+                    count=row[1],
+                    item_type=row[2],
+                ))
+            else:
+                stats.append(UsageStat(
+                    key=str(row[0]),
+                    count=row[1],
+                ))
+        return stats
+
+    async def count_usage_events(
+        self,
+        user_id: Optional[UUID] = None,
+        item_id: Optional[UUID] = None,
+        item_type: Optional[CatalogItemType] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> int:
+        statement = select(func.count(UsageEventModel.id))
+
+        if user_id is not None:
+            statement = statement.where(UsageEventModel.user_id == user_id)
+        if item_id is not None:
+            statement = statement.where(UsageEventModel.item_id == item_id)
+        if item_type is not None:
+            statement = statement.where(UsageEventModel.item_type == item_type.value)
+        if start_date is not None:
+            statement = statement.where(UsageEventModel.created_at >= start_date)
+        if end_date is not None:
+            statement = statement.where(UsageEventModel.created_at <= end_date)
+
+        result = await self._session.execute(statement)
+        return result.scalar_one()
+
+    def _usage_event_to_entity(self, model: UsageEventModel) -> UsageEvent:
+        return UsageEvent(
+            id=model.id,
+            user_id=model.user_id,
+            item_id=model.item_id,
+            item_type=CatalogItemType(model.item_type),
+            action=model.action,
+            metadata=model.event_metadata if model.event_metadata else {},
             created_at=model.created_at,
         )

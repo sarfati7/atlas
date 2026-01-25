@@ -9,6 +9,7 @@ from atlas.domain.entities.user_configuration import (
 )
 from atlas.domain.entities.effective_configuration import EffectiveConfiguration
 from atlas.domain.entities.audit_log import AuditLog
+from atlas.domain.entities.usage_event import UsageEvent, UsageStat
 
 __all__ = [
     "User",
@@ -20,4 +21,6 @@ __all__ = [
     "ConfigurationVersion",
     "EffectiveConfiguration",
     "AuditLog",
+    "UsageEvent",
+    "UsageStat",
 ]
