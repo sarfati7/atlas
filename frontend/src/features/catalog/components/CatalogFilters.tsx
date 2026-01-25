@@ -5,7 +5,7 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { CatalogItemType } from '../types'
 
-type FilterValue = CatalogItemType | 'ALL'
+type FilterValue = CatalogItemType | 'all'
 
 interface CatalogFiltersProps {
   value: FilterValue
@@ -16,10 +16,10 @@ export function CatalogFilters({ value, onValueChange }: CatalogFiltersProps) {
   return (
     <Tabs value={value} onValueChange={(v) => onValueChange(v as FilterValue)}>
       <TabsList>
-        <TabsTrigger value="ALL">All</TabsTrigger>
-        <TabsTrigger value="SKILL">Skills</TabsTrigger>
-        <TabsTrigger value="MCP">MCPs</TabsTrigger>
-        <TabsTrigger value="TOOL">Tools</TabsTrigger>
+        <TabsTrigger value="all">All</TabsTrigger>
+        <TabsTrigger value="skill">Skills</TabsTrigger>
+        <TabsTrigger value="mcp">MCPs</TabsTrigger>
+        <TabsTrigger value="tool">Tools</TabsTrigger>
       </TabsList>
     </Tabs>
   )

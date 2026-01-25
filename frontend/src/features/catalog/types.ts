@@ -4,7 +4,7 @@
  * Maps to backend catalog API responses.
  */
 
-export type CatalogItemType = 'SKILL' | 'MCP' | 'TOOL'
+export type CatalogItemType = 'skill' | 'mcp' | 'tool'
 
 export interface CatalogItemSummary {
   id: string

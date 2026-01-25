@@ -15,15 +15,15 @@ import { DocumentationViewer } from './DocumentationViewer'
 import type { CatalogItemDetail as CatalogItemDetailType, CatalogItemType } from '../types'
 
 const typeColors: Record<CatalogItemType, string> = {
-  SKILL: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  MCP: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  TOOL: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  skill: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  mcp: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  tool: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
 }
 
 const typeLabels: Record<CatalogItemType, string> = {
-  SKILL: 'Skill',
-  MCP: 'MCP',
-  TOOL: 'Tool',
+  skill: 'Skill',
+  mcp: 'MCP',
+  tool: 'Tool',
 }
 
 interface CatalogDetailProps {

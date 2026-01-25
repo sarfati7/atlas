@@ -12,15 +12,15 @@ interface CatalogCardProps {
 }
 
 const TYPE_STYLES: Record<CatalogItemType, { label: string; className: string }> = {
-  SKILL: {
+  skill: {
     label: 'Skill',
     className: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   },
-  MCP: {
+  mcp: {
     label: 'MCP',
     className: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
   },
-  TOOL: {
+  tool: {
     label: 'Tool',
     className: 'bg-green-500/20 text-green-400 border-green-500/30',
   },

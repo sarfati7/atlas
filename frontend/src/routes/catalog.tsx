@@ -9,16 +9,16 @@ import { CatalogFilters } from '@/features/catalog/components/CatalogFilters'
 import { CatalogSearch } from '@/features/catalog/components/CatalogSearch'
 import type { CatalogItemType } from '@/features/catalog/types'
 
-type FilterValue = CatalogItemType | 'ALL'
+type FilterValue = CatalogItemType | 'all'
 
 export function CatalogPage() {
-  const [typeFilter, setTypeFilter] = useState<FilterValue>('ALL')
+  const [typeFilter, setTypeFilter] = useState<FilterValue>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
   // Build query params
   const queryParams = useMemo(() => {
     const params: { type?: CatalogItemType; q?: string } = {}
-    if (typeFilter !== 'ALL') {
+    if (typeFilter !== 'all') {
       params.type = typeFilter
     }
     if (searchQuery.trim()) {
