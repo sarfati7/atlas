@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2025-01-23)
 ## Current Position
 
 Phase: 8 of 9 (CLI Sync Tool)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 08-01-PLAN.md
+Last activity: 2026-01-25 - Completed 08-02-PLAN.md
 
-Progress: [========..] 80%
+Progress: [========..] 82%
 
 ## Phase 8 Handoff
 
@@ -58,11 +58,11 @@ Progress: [========..] 80%
 | 5 | 2 | 6 min | 3.0 min |
 | 6 | 5 | 26 min | 5.2 min |
 | 7 | 5 | 19 min | 3.8 min |
-| 8 | 1 | 3 min | 3.0 min |
+| 8 | 2 | 6 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-03 (2 min), 07-04 (4 min), 07-05 (4 min), 08-01 (3 min)
-- Trend: Phase 8 started, consistent execution pace
+- Last 5 plans: 07-04 (4 min), 07-05 (4 min), 08-01 (3 min), 08-02 (3 min)
+- Trend: Phase 8 progressing, consistent execution pace
 
 *Updated after each plan completion*
 
@@ -162,6 +162,9 @@ Recent decisions affecting current work:
 - [08-01]: Keyring for OS-native secure credential storage
 - [08-01]: Atomic write pattern with temp file + rename for safety
 - [08-01]: CLI module structure: commands/, api/, storage/
+- [08-02]: httpx.Auth subclass for automatic token refresh on 401
+- [08-02]: OAuth2 form data format for CLI login (matches backend)
+- [08-02]: Dataclass config with environment variable overrides
 
 ### Pending Todos
 
@@ -274,6 +277,6 @@ Frontend Settings page:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 08-01-PLAN.md
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
-Next: Execute 08-02-PLAN.md (Auth commands)
+Next: Execute 08-03-PLAN.md (Sync command)
