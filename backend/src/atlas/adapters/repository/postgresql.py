@@ -5,6 +5,8 @@ from typing import Literal, Optional
 from uuid import UUID
 
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.attributes import instance_state
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from atlas.adapters.repository.interface import AbstractRepository
@@ -97,13 +99,18 @@ class PostgreSQLRepository(AbstractRepository):
         return [self._user_to_entity(m) for m in models]
 
     def _user_to_entity(self, model: UserModel) -> User:
+        # Check if teams relationship is loaded to avoid lazy loading in async context
+        state = instance_state(model)
+        teams_loaded = "teams" in state.dict
+        team_ids = [team.id for team in model.teams] if teams_loaded and model.teams else []
+
         return User(
             id=model.id,
             email=model.email,
             username=model.username,
             password_hash=model.password_hash if model.password_hash else None,
             role=UserRole(model.role) if model.role else UserRole.USER,
-            team_ids=[team.id for team in model.teams] if model.teams else [],
+            team_ids=team_ids,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
@@ -168,10 +175,15 @@ class PostgreSQLRepository(AbstractRepository):
         return [self._team_to_entity(m) for m in models]
 
     def _team_to_entity(self, model: TeamModel) -> Team:
+        # Check if members relationship is loaded to avoid lazy loading in async context
+        state = instance_state(model)
+        members_loaded = "members" in state.dict
+        member_ids = [member.id for member in model.members] if members_loaded and model.members else []
+
         return Team(
             id=model.id,
             name=model.name,
-            member_ids=[member.id for member in model.members] if model.members else [],
+            member_ids=member_ids,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
