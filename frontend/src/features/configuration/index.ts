@@ -1,7 +1,4 @@
-/**
- * Configuration feature exports.
- */
-
 export * from './types'
 export * from './hooks/useConfiguration'
-export { ConfigurationEditor } from './components/ConfigurationEditor'
+export { VersionHistory, VersionHistorySkeleton } from './components/VersionHistory'
+export { VersionHistoryItem } from './components/VersionHistoryItem'
