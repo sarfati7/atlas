@@ -176,14 +176,14 @@ Plans:
   5. System logs all configuration changes (who, what, when)
   6. Admin can view audit logs of all changes
   7. User role has limited permissions (can only manage own profile)
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 09-01: Team management backend and UI
-- [ ] 09-02: User management backend and UI
-- [ ] 09-03: Audit logging infrastructure
-- [ ] 09-04: Usage analytics backend and dashboard
-- [ ] 09-05: Role enforcement (admin vs user permissions)
+- [ ] 09-01-PLAN.md — Domain layer (User role, AuditLog entity) and database migration
+- [ ] 09-02-PLAN.md — RBAC authorization service and team management API
+- [ ] 09-03-PLAN.md — User management and audit log API endpoints
+- [ ] 09-04-PLAN.md — Admin panel frontend (team and user management UI)
+- [ ] 09-05-PLAN.md — Usage analytics backend and dashboard with audit log viewer
 
 ## Progress
 
