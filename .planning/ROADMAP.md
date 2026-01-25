@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: User Profiles Backend** - Dashboard data and configuration inheritance
 - [x] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
 - [x] **Phase 7: Web Frontend Configuration** - Profile editor, version history, import
-- [ ] **Phase 8: CLI Sync Tool** - Atomic sync, authentication, cross-platform support
+- [x] **Phase 8: CLI Sync Tool** - Atomic sync, authentication, cross-platform support
 - [ ] **Phase 9: Governance & Admin** - Admin panel, audit logging, team management
 
 ## Phase Details
@@ -158,11 +158,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — CLI project setup with Typer, storage modules
-- [ ] 08-02-PLAN.md — Authentication flow and token storage
-- [ ] 08-03-PLAN.md — Sync command with atomic file operations
-- [ ] 08-04-PLAN.md — Status and doctor commands
-- [ ] 08-05-PLAN.md — Tests and documentation
+- [x] 08-01-PLAN.md — CLI project setup with Typer, storage modules
+- [x] 08-02-PLAN.md — Authentication flow and token storage
+- [x] 08-03-PLAN.md — Sync command with atomic file operations
+- [x] 08-04-PLAN.md — Status and doctor commands
+- [x] 08-05-PLAN.md — Tests and documentation
 
 ### Phase 9: Governance & Admin
 **Goal**: Admins can manage users, teams, and view audit logs
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 5. User Profiles Backend | 2/2 | Complete | 2026-01-24 |
 | 6. Web Frontend Core | 5/5 | Complete | 2026-01-24 |
 | 7. Web Frontend Configuration | 5/5 | Complete | 2026-01-25 |
-| 8. CLI Sync Tool | 0/5 | Ready | - |
+| 8. CLI Sync Tool | 5/5 | Complete | 2026-01-25 |
 | 9. Governance & Admin | 0/5 | Not started | - |
 
 ---

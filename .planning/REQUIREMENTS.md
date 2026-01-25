@@ -39,9 +39,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Sync & Distribution
 
-- [ ] **SYNC-01**: CLI tool syncs config to local `~/.claude/`
-- [ ] **SYNC-02**: CLI authenticates with user's account
-- [ ] **SYNC-03**: CLI pulls latest config from git repo
+- [x] **SYNC-01**: CLI tool syncs config to local `~/.claude/`
+- [x] **SYNC-02**: CLI authenticates with user's account
+- [x] **SYNC-03**: CLI pulls latest config from git repo
 
 ### Governance
 
@@ -125,9 +125,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-03 | Phase 4 | Complete |
 | CONF-04 | Phase 4 | Complete |
 | CONF-05 | Phase 4 | Complete |
-| SYNC-01 | Phase 8 | Pending |
-| SYNC-02 | Phase 8 | Pending |
-| SYNC-03 | Phase 8 | Pending |
+| SYNC-01 | Phase 8 | Complete |
+| SYNC-02 | Phase 8 | Complete |
+| SYNC-03 | Phase 8 | Complete |
 | GOVR-01 | Phase 9 | Pending |
 | GOVR-02 | Phase 9 | Pending |
 | GOVR-03 | Phase 9 | Pending |
