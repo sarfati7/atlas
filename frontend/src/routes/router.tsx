@@ -5,6 +5,7 @@ import { ResetPasswordPage } from './reset-password'
 import { CatalogPage } from './catalog'
 import { CatalogDetailPage } from './catalog-detail'
 import { DashboardPage } from './dashboard'
+import { SettingsPage } from './settings'
 import { RootLayout } from '@/components/layout'
 import { guestLoader, protectedLoader } from '@/lib/loaders'
 
@@ -64,7 +65,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/settings',
-        element: <div className="p-6">Settings (coming later)</div>,
+        element: <SettingsPage />,
         loader: protectedLoader,
       },
     ],
