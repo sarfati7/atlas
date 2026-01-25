@@ -155,14 +155,14 @@ Plans:
   3. CLI pulls latest configuration from git repository
   4. Sync is atomic (no partial syncs on failure)
   5. CLI works on macOS, Linux, and Windows
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 08-01: CLI project setup with Typer
-- [ ] 08-02: Authentication flow and token storage
-- [ ] 08-03: Sync command with atomic file operations
-- [ ] 08-04: Status and doctor commands
-- [ ] 08-05: Cross-platform testing and edge cases
+- [ ] 08-01-PLAN.md — CLI project setup with Typer, storage modules
+- [ ] 08-02-PLAN.md — Authentication flow and token storage
+- [ ] 08-03-PLAN.md — Sync command with atomic file operations
+- [ ] 08-04-PLAN.md — Status and doctor commands
+- [ ] 08-05-PLAN.md — Tests and documentation
 
 ### Phase 9: Governance & Admin
 **Goal**: Admins can manage users, teams, and view audit logs
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 5. User Profiles Backend | 2/2 | Complete | 2026-01-24 |
 | 6. Web Frontend Core | 5/5 | Complete | 2026-01-24 |
 | 7. Web Frontend Configuration | 5/5 | Complete | 2026-01-25 |
-| 8. CLI Sync Tool | 0/5 | Not started | - |
+| 8. CLI Sync Tool | 0/5 | Ready | - |
 | 9. Governance & Admin | 0/5 | Not started | - |
 
 ---
