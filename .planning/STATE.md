@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2025-01-23)
 
 **Core value:** A new developer can onboard in minutes instead of weeks by seeing everything their team has built
-**Current focus:** Phase 8 - CLI Sync Tool (COMPLETE)
+**Current focus:** Phase 9 - Governance & Admin (IN PROGRESS)
 
 ## Current Position
 
-Phase: 8 of 9 (CLI Sync Tool)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-01-25 - Completed 08-05-PLAN.md
+Phase: 9 of 9 (Governance & Admin)
+Plan: 1 of ? in current phase
+Status: In progress
+Last activity: 2026-01-25 - Completed 09-01-PLAN.md
 
-Progress: [=========.] 90%
+Progress: [=========.] 91%
 
 ## Phase 8 Handoff
 
@@ -45,9 +45,9 @@ Progress: [=========.] 90%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 31
+- Total plans completed: 32
 - Average duration: 3.6 min
-- Total execution time: 1.9 hours
+- Total execution time: 1.97 hours
 
 **By Phase:**
 
@@ -61,10 +61,11 @@ Progress: [=========.] 90%
 | 6 | 5 | 26 min | 5.2 min |
 | 7 | 5 | 19 min | 3.8 min |
 | 8 | 5 | 16 min | 3.2 min |
+| 9 | 1 | 4 min | 4.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 08-02 (3 min), 08-03 (2 min), 08-04 (1 min), 08-05 (24 min)
-- Trend: Phase 8 complete
+- Last 5 plans: 08-03 (2 min), 08-04 (1 min), 08-05 (24 min), 09-01 (4 min)
+- Trend: Phase 9 started
 
 *Updated after each plan completion*
 
@@ -176,6 +177,11 @@ Recent decisions affecting current work:
 - [08-05]: ATLAS_ACCESS_TOKEN env var takes precedence over keyring for CI/headless systems
 - [08-05]: Pytest pythonpath configured in pyproject.toml for src layout
 - [08-05]: KeyringError caught gracefully with helpful error messages
+- [09-01]: UserRole as StrEnum for string serialization and enum validation
+- [09-01]: AuditLog frozen=True for immutable audit records
+- [09-01]: JSON column for audit details to allow flexible before/after data
+- [09-01]: is_admin property delegates to role check for clean API
+- [09-01]: AuthorizationError exception class for authorization failures
 
 ### Pending Todos
 
@@ -312,6 +318,6 @@ CLI features:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 08-05-PLAN.md (Phase 8 complete)
+Stopped at: Completed 09-01-PLAN.md (Phase 9 plan 1)
 Resume file: None
-Next: Plan Phase 9 - MCP Integration
+Next: Continue Phase 9 - Governance & Admin
