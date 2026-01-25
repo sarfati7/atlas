@@ -3,10 +3,13 @@
  * Maps to backend API response schemas.
  */
 
+export type UserRole = 'admin' | 'user'
+
 export interface User {
   id: string
   email: string
   username: string
+  role: UserRole
   created_at: string
 }
 

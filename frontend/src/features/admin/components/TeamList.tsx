@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
-import { MoreHorizontal, Pencil, Trash2, Users } from 'lucide-react'
+import { Pencil, Trash2, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,

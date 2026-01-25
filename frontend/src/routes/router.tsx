@@ -6,6 +6,8 @@ import { CatalogPage } from './catalog'
 import { CatalogDetailPage } from './catalog-detail'
 import { DashboardPage } from './dashboard'
 import { SettingsPage } from './settings'
+import { AdminTeamsPage } from './admin-teams'
+import { AdminUsersPage } from './admin-users'
 import { RootLayout } from '@/components/layout'
 import { guestLoader, protectedLoader } from '@/lib/loaders'
 
@@ -66,6 +68,18 @@ export const router = createBrowserRouter([
       {
         path: '/settings',
         element: <SettingsPage />,
+        loader: protectedLoader,
+      },
+
+      // Admin routes (protected + admin-only via backend)
+      {
+        path: '/admin/teams',
+        element: <AdminTeamsPage />,
+        loader: protectedLoader,
+      },
+      {
+        path: '/admin/users',
+        element: <AdminUsersPage />,
         loader: protectedLoader,
       },
     ],

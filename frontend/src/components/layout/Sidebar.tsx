@@ -3,11 +3,11 @@
  */
 
 import { Link, useLocation } from 'react-router-dom'
-import { Book, LayoutDashboard, LogIn, LogOut, Settings } from 'lucide-react'
+import { Book, LayoutDashboard, LogIn, LogOut, Settings, Shield, Users, UsersRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
-import { useLogout } from '@/features/auth/hooks/useAuth'
+import { useLogout, useCurrentUser } from '@/features/auth/hooks/useAuth'
 
 interface NavItemProps {
   to: string
@@ -36,7 +36,9 @@ function NavItem({ to, icon, label, isActive }: NavItemProps) {
 export function Sidebar() {
   const location = useLocation()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const { data: currentUser } = useCurrentUser()
   const logout = useLogout()
+  const isAdmin = currentUser?.role === 'admin'
 
   const handleLogout = () => {
     logout.mutate()
@@ -74,6 +76,30 @@ export function Sidebar() {
               icon={<Settings className="h-4 w-4" />}
               label="Settings"
               isActive={location.pathname === '/settings'}
+            />
+          </>
+        )}
+
+        {/* Admin section - only visible to admins */}
+        {isAdmin && (
+          <>
+            <div className="mt-4 mb-2 px-3 py-1">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <Shield className="h-3 w-3" />
+                Admin
+              </span>
+            </div>
+            <NavItem
+              to="/admin/teams"
+              icon={<UsersRound className="h-4 w-4" />}
+              label="Teams"
+              isActive={location.pathname.startsWith('/admin/teams')}
+            />
+            <NavItem
+              to="/admin/users"
+              icon={<Users className="h-4 w-4" />}
+              label="Users"
+              isActive={location.pathname.startsWith('/admin/users')}
             />
           </>
         )}

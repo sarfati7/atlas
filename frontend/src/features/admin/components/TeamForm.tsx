@@ -44,7 +44,7 @@ export function TeamForm({ open, onClose, team }: TeamFormProps) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<TeamFormData>({
     resolver: zodResolver(teamSchema),
     defaultValues: {

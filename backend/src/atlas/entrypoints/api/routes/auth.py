@@ -10,10 +10,10 @@ from pydantic import BaseModel, EmailStr
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+from atlas.adapters.authentication import AbstractAuthService
+from atlas.adapters.email import AbstractEmailService
 from atlas.config import settings
 from atlas.domain.entities.user import User
-from atlas.domain.interfaces import AbstractAuthService, AbstractEmailService
-from atlas.domain.interfaces.repository import AbstractRepository
 from atlas.domain.value_objects.password import Password
 from atlas.entrypoints.dependencies import (
     CurrentUser,
@@ -57,6 +57,7 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     username: str
+    role: str
     created_at: datetime
 
 
@@ -337,6 +338,7 @@ async def get_current_user_info(
         id=current_user.id,
         email=current_user.email,
         username=current_user.username,
+        role=current_user.role.value,
         created_at=current_user.created_at,
     )
 
