@@ -1,10 +1,18 @@
 """User entity - Represents a platform user."""
 
 from datetime import datetime
+from enum import StrEnum
 from typing import Optional
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
+
+
+class UserRole(StrEnum):
+    """User role for authorization."""
+
+    ADMIN = "admin"
+    USER = "user"
 
 
 class User(BaseModel):
@@ -19,11 +27,17 @@ class User(BaseModel):
     email: str
     username: str
     password_hash: Optional[str] = None
+    role: UserRole = Field(default=UserRole.USER)
     team_ids: list[UUID] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     model_config = {"frozen": False}
+
+    @property
+    def is_admin(self) -> bool:
+        """Check if user has admin role."""
+        return self.role == UserRole.ADMIN
 
     def add_to_team(self, team_id: UUID) -> None:
         """Add user to a team."""
