@@ -10,6 +10,7 @@ import {
   useUpdateConfiguration,
   useImportConfiguration,
   useDraftStore,
+  HistoryTab,
 } from '@/features/configuration'
 
 function EditorSkeleton() {
@@ -165,9 +166,13 @@ export function SettingsPage() {
           </TabsContent>
 
           <TabsContent value="history">
-            <div className="text-muted-foreground py-12 text-center">
-              History tab (coming in Plan 07-04)
-            </div>
+            <HistoryTab
+              isDirty={isDirty}
+              onRollbackSuccess={() => {
+                // After rollback, refresh config and reset draft
+                refetch()
+              }}
+            />
           </TabsContent>
 
           <TabsContent value="import">

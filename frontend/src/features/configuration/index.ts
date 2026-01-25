@@ -4,3 +4,5 @@ export { VersionHistory, VersionHistorySkeleton } from './components/VersionHist
 export { VersionHistoryItem } from './components/VersionHistoryItem'
 export { ConfigurationEditor } from './components/ConfigurationEditor'
 export { useDraftStore } from './stores/draftStore'
+export { VersionDetail } from './components/VersionDetail'
+export { HistoryTab } from './components/HistoryTab'
