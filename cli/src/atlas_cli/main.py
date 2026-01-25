@@ -33,10 +33,10 @@ def main_callback(
     pass
 
 
-# Command registrations will be added here as commands are implemented:
-# from atlas_cli.commands import auth, sync
-# app.add_typer(auth.app, name="auth")
-# app.command()(sync.sync)
+# Register command groups
+from atlas_cli.commands import auth
+
+app.add_typer(auth.app, name="auth")
 
 
 def main() -> None:
