@@ -13,6 +13,12 @@ import type {
   CreateTeamRequest,
   UpdateTeamRequest,
   UpdateUserRoleRequest,
+  UsageSummary,
+  UsageByUser,
+  UsageByItem,
+  UsageTimeline,
+  AuditLogsResponse,
+  AuditLog,
 } from '../types'
 
 export const adminApi = {
@@ -125,5 +131,119 @@ export const adminApi = {
    */
   async deleteUser(id: string): Promise<void> {
     await apiClient.delete(`/api/v1/admin/users/${id}`)
+  },
+
+  // Analytics endpoints
+
+  /**
+   * Get usage summary.
+   */
+  async fetchUsageSummary(startDate?: string, endDate?: string): Promise<UsageSummary> {
+    const params = new URLSearchParams()
+    if (startDate) params.set('start_date', startDate)
+    if (endDate) params.set('end_date', endDate)
+    const query = params.toString()
+    const response = await apiClient.get<UsageSummary>(
+      `/api/v1/admin/analytics/summary${query ? `?${query}` : ''}`
+    )
+    return response.data
+  },
+
+  /**
+   * Get usage by user.
+   */
+  async fetchUsageByUser(
+    startDate?: string,
+    endDate?: string,
+    limit = 20
+  ): Promise<UsageByUser> {
+    const params = new URLSearchParams({ limit: limit.toString() })
+    if (startDate) params.set('start_date', startDate)
+    if (endDate) params.set('end_date', endDate)
+    const response = await apiClient.get<UsageByUser>(
+      `/api/v1/admin/analytics/usage-by-user?${params}`
+    )
+    return response.data
+  },
+
+  /**
+   * Get usage by item.
+   */
+  async fetchUsageByItem(
+    startDate?: string,
+    endDate?: string,
+    limit = 20
+  ): Promise<UsageByItem> {
+    const params = new URLSearchParams({ limit: limit.toString() })
+    if (startDate) params.set('start_date', startDate)
+    if (endDate) params.set('end_date', endDate)
+    const response = await apiClient.get<UsageByItem>(
+      `/api/v1/admin/analytics/usage-by-item?${params}`
+    )
+    return response.data
+  },
+
+  /**
+   * Get usage timeline.
+   */
+  async fetchUsageTimeline(startDate?: string, endDate?: string): Promise<UsageTimeline> {
+    const params = new URLSearchParams()
+    if (startDate) params.set('start_date', startDate)
+    if (endDate) params.set('end_date', endDate)
+    const query = params.toString()
+    const response = await apiClient.get<UsageTimeline>(
+      `/api/v1/admin/analytics/usage-timeline${query ? `?${query}` : ''}`
+    )
+    return response.data
+  },
+
+  // Audit log endpoints
+
+  /**
+   * Get paginated audit logs.
+   */
+  async fetchAuditLogs(
+    page = 1,
+    pageSize = 50,
+    filters?: {
+      resource_type?: string
+      resource_id?: string
+      user_id?: string
+      action?: string
+    }
+  ): Promise<AuditLogsResponse> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      page_size: pageSize.toString(),
+    })
+    if (filters?.resource_type) params.set('resource_type', filters.resource_type)
+    if (filters?.resource_id) params.set('resource_id', filters.resource_id)
+    if (filters?.user_id) params.set('user_id', filters.user_id)
+    if (filters?.action) params.set('action', filters.action)
+    const response = await apiClient.get<AuditLogsResponse>(
+      `/api/v1/admin/audit/logs?${params}`
+    )
+    return response.data
+  },
+
+  /**
+   * Get a single audit log.
+   */
+  async fetchAuditLog(id: string): Promise<AuditLog> {
+    const response = await apiClient.get<AuditLog>(`/api/v1/admin/audit/logs/${id}`)
+    return response.data
+  },
+
+  /**
+   * Get audit trail for a resource.
+   */
+  async fetchResourceAuditTrail(
+    resourceType: string,
+    resourceId: string
+  ): Promise<{ items: AuditLog[] }> {
+    const response = await apiClient.get<{ items: AuditLog[] }>(
+      `/api/v1/admin/audit/resources/${resourceType}/${resourceId}`
+    )
+    return response.data
   },
 }

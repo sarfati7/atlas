@@ -174,3 +174,88 @@ export function useDeleteUser() {
     },
   })
 }
+
+// Analytics hooks
+
+/**
+ * Hook to fetch usage summary.
+ */
+export function useUsageSummary(startDate?: string, endDate?: string) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'analytics', 'summary', { startDate, endDate }] as const,
+    queryFn: () => adminApi.fetchUsageSummary(startDate, endDate),
+  })
+}
+
+/**
+ * Hook to fetch usage by user.
+ */
+export function useUsageByUser(startDate?: string, endDate?: string, limit = 20) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'analytics', 'by-user', { startDate, endDate, limit }] as const,
+    queryFn: () => adminApi.fetchUsageByUser(startDate, endDate, limit),
+  })
+}
+
+/**
+ * Hook to fetch usage by item.
+ */
+export function useUsageByItem(startDate?: string, endDate?: string, limit = 20) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'analytics', 'by-item', { startDate, endDate, limit }] as const,
+    queryFn: () => adminApi.fetchUsageByItem(startDate, endDate, limit),
+  })
+}
+
+/**
+ * Hook to fetch usage timeline.
+ */
+export function useUsageTimeline(startDate?: string, endDate?: string) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'analytics', 'timeline', { startDate, endDate }] as const,
+    queryFn: () => adminApi.fetchUsageTimeline(startDate, endDate),
+  })
+}
+
+// Audit log hooks
+
+/**
+ * Hook to fetch paginated audit logs.
+ */
+export function useAuditLogs(
+  page = 1,
+  pageSize = 50,
+  filters?: {
+    resource_type?: string
+    resource_id?: string
+    user_id?: string
+    action?: string
+  }
+) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'audit', 'logs', { page, pageSize, ...filters }] as const,
+    queryFn: () => adminApi.fetchAuditLogs(page, pageSize, filters),
+  })
+}
+
+/**
+ * Hook to fetch a single audit log.
+ */
+export function useAuditLog(id: string) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'audit', 'log', id] as const,
+    queryFn: () => adminApi.fetchAuditLog(id),
+    enabled: !!id,
+  })
+}
+
+/**
+ * Hook to fetch audit trail for a resource.
+ */
+export function useResourceAuditTrail(resourceType: string, resourceId: string) {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'audit', 'trail', resourceType, resourceId] as const,
+    queryFn: () => adminApi.fetchResourceAuditTrail(resourceType, resourceId),
+    enabled: !!resourceType && !!resourceId,
+  })
+}

@@ -8,6 +8,8 @@ import { DashboardPage } from './dashboard'
 import { SettingsPage } from './settings'
 import { AdminTeamsPage } from './admin-teams'
 import { AdminUsersPage } from './admin-users'
+import { AdminAnalyticsPage } from './admin-analytics'
+import { AdminAuditLogsPage } from './admin-audit'
 import { RootLayout } from '@/components/layout'
 import { guestLoader, protectedLoader } from '@/lib/loaders'
 
@@ -80,6 +82,16 @@ export const router = createBrowserRouter([
       {
         path: '/admin/users',
         element: <AdminUsersPage />,
+        loader: protectedLoader,
+      },
+      {
+        path: '/admin/analytics',
+        element: <AdminAnalyticsPage />,
+        loader: protectedLoader,
+      },
+      {
+        path: '/admin/audit',
+        element: <AdminAuditLogsPage />,
         loader: protectedLoader,
       },
     ],
