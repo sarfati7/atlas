@@ -35,8 +35,10 @@ def main_callback(
 
 # Register command groups
 from atlas_cli.commands import auth
+from atlas_cli.commands.sync import sync
 
 app.add_typer(auth.app, name="auth")
+app.command()(sync)
 
 
 def main() -> None:
