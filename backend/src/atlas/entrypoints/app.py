@@ -7,6 +7,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from atlas.entrypoints.api.routes import (
+    admin_analytics_router,
     admin_audit_router,
     admin_teams_router,
     admin_users_router,
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     # Include routers with /api/v1 prefix
+    app.include_router(admin_analytics_router, prefix="/api/v1")
     app.include_router(admin_audit_router, prefix="/api/v1")
     app.include_router(admin_teams_router, prefix="/api/v1")
     app.include_router(admin_users_router, prefix="/api/v1")

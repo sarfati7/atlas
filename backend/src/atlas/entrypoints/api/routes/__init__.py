@@ -1,5 +1,6 @@
 """API route modules."""
 
+from atlas.entrypoints.api.routes.admin_analytics import router as admin_analytics_router
 from atlas.entrypoints.api.routes.admin_audit import router as admin_audit_router
 from atlas.entrypoints.api.routes.admin_teams import router as admin_teams_router
 from atlas.entrypoints.api.routes.admin_users import router as admin_users_router
@@ -10,6 +11,7 @@ from atlas.entrypoints.api.routes.profile import router as profile_router
 from atlas.entrypoints.api.routes.webhooks import router as webhooks_router
 
 __all__ = [
+    "admin_analytics_router",
     "admin_audit_router",
     "admin_teams_router",
     "admin_users_router",
