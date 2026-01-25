@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { Save, AlertTriangle, Upload } from 'lucide-react'
+import { useEffect } from 'react'
+import { Save, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
@@ -8,10 +8,12 @@ import {
   ConfigurationEditor,
   useConfiguration,
   useUpdateConfiguration,
-  useImportConfiguration,
   useDraftStore,
   HistoryTab,
+  ImportTab,
+  InheritanceIndicator,
 } from '@/features/configuration'
+import { useEffectiveConfiguration } from '@/features/profile/hooks/useProfile'
 
 function EditorSkeleton() {
   return (
@@ -39,9 +41,8 @@ function EditorError({ onRetry }: { onRetry: () => void }) {
 
 export function SettingsPage() {
   const { data: config, isLoading, error, refetch } = useConfiguration()
+  const { data: effective } = useEffectiveConfiguration()
   const updateConfig = useUpdateConfiguration()
-  const importConfig = useImportConfiguration()
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { content, isDirty, setContent, setOriginalContent } = useDraftStore()
 
@@ -75,69 +76,35 @@ export function SettingsPage() {
     )
   }
 
-  const handleImportClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Validate file type
-      if (!file.name.endsWith('.md')) {
-        // Reset input and ignore
-        e.target.value = ''
-        return
-      }
-
-      importConfig.mutate(file, {
-        onSuccess: () => {
-          refetch()
-          e.target.value = '' // Reset for next import
-        },
-        onError: () => {
-          e.target.value = '' // Reset on error too
-        },
-      })
-    }
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-5xl px-4 py-8">
-        {/* Header with Save and Import buttons */}
+        {/* Header with save button */}
         <header className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-foreground">Settings</h1>
             <p className="text-muted-foreground">Manage your claude.md configuration</p>
           </div>
-          <div className="flex items-center gap-2">
-            {/* Hidden file input for import */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".md"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            <Button
-              variant="outline"
-              onClick={handleImportClick}
-              disabled={importConfig.isPending}
-              className="gap-2"
-            >
-              <Upload className="h-4 w-4" />
-              {importConfig.isPending ? 'Importing...' : 'Import'}
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={!isDirty || updateConfig.isPending}
-              className="gap-2"
-            >
-              <Save className="h-4 w-4" />
-              {updateConfig.isPending ? 'Saving...' : 'Save'}
-            </Button>
-          </div>
+          <Button
+            onClick={handleSave}
+            disabled={!isDirty || updateConfig.isPending}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {updateConfig.isPending ? 'Saving...' : 'Save'}
+          </Button>
         </header>
+
+        {/* Inheritance indicator */}
+        {effective && (
+          <div className="mb-4">
+            <InheritanceIndicator
+              orgApplied={effective.org_applied}
+              teamApplied={effective.team_applied}
+              userApplied={effective.user_applied}
+            />
+          </div>
+        )}
 
         {/* Dirty indicator */}
         {isDirty && (
@@ -169,16 +136,18 @@ export function SettingsPage() {
             <HistoryTab
               isDirty={isDirty}
               onRollbackSuccess={() => {
-                // After rollback, refresh config and reset draft
                 refetch()
               }}
             />
           </TabsContent>
 
           <TabsContent value="import">
-            <div className="text-muted-foreground py-12 text-center">
-              Import tab (coming in Plan 07-05)
-            </div>
+            <ImportTab
+              hasExistingContent={!!content.trim()}
+              onImportSuccess={() => {
+                refetch()
+              }}
+            />
           </TabsContent>
         </Tabs>
       </div>
