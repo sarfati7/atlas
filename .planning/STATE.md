@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2025-01-23)
 ## Current Position
 
 Phase: 7 of 9 (Web Frontend Configuration)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 07-03-PLAN.md
+Last activity: 2026-01-25 - Completed 07-04-PLAN.md
 
-Progress: [======....] 68%
+Progress: [=======...] 72%
 
 ## Phase 7 Handoff
 
@@ -42,9 +42,9 @@ Progress: [======....] 68%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 22
 - Average duration: 3.4 min
-- Total execution time: 1.3 hours
+- Total execution time: 1.35 hours
 
 **By Phase:**
 
@@ -56,10 +56,10 @@ Progress: [======....] 68%
 | 4 | 3 | 8 min | 2.7 min |
 | 5 | 2 | 6 min | 3.0 min |
 | 6 | 5 | 26 min | 5.2 min |
-| 7 | 1 | 2 min | 2.0 min |
+| 7 | 2 | 6 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (5 min), 06-05 (5 min), 06-04 (2 min), 07-03 (2 min)
+- Last 5 plans: 06-05 (5 min), 06-04 (2 min), 07-03 (2 min), 07-04 (4 min)
 - Trend: Phase 7 in progress, fast execution continues
 
 *Updated after each plan completion*
@@ -149,6 +149,10 @@ Recent decisions affecting current work:
 - [07-03]: Zustand for draft state (simpler than Context, persists across tab switches)
 - [07-03]: Import button in header toolbar alongside Save for quick access
 - [07-03]: isDirty computed dynamically from content !== originalContent
+- [07-04]: Version metadata display (message, author, date, SHA) since backend lacks historical content endpoint
+- [07-04]: Confirmation dialog explains rollback creates new commit with old content
+- [07-04]: Brief success state (1.5s) before navigating back to list
+- [07-04]: Dirty warning dialog when clicking version with unsaved editor changes
 
 ### Pending Todos
 
@@ -243,6 +247,6 @@ Frontend pages:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-03-PLAN.md
+Stopped at: Completed 07-04-PLAN.md
 Resume file: None
-Next: Execute 07-04-PLAN.md
+Next: Execute 07-05-PLAN.md
