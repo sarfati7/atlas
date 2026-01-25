@@ -138,6 +138,9 @@ Recent decisions affecting current work:
 - [06-05]: Profile feature uses standard module pattern (api/hooks/components)
 - [06-04]: Type badge colors: emerald SKILL, blue MCP, amber TOOL for detail page
 - [06-04]: DocumentationViewer with react-markdown and remark-gfm for README rendering
+- [07-01]: Monaco vs-dark theme for configuration editor (built-in, matches app aesthetic)
+- [07-01]: Edit/Preview toggle in toolbar (not side-by-side split)
+- [07-01]: Configuration hooks invalidate profile.effectiveConfiguration and profile.dashboard caches
 - [07-02]: Timeline uses absolute positioned vertical line with circle indicators for active/inactive states
 - [07-02]: isLatest determined by comparing version SHA with currentCommitSha prop
 - [07-02]: Load more starts at 10, increments by 10 per click, shows "(N remaining)" count
