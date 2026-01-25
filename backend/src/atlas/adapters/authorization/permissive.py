@@ -1,42 +1,56 @@
-"""Permissive authorization service - Allow-all implementation for Phase 1."""
+"""Permissive authorization service - Allow-all implementation."""
 
+from atlas.adapters.authorization.interface import (
+    AbstractAuthorizationService,
+    AuthorizationError,
+)
 from atlas.domain.entities import CatalogItem, User
-from atlas.domain.interfaces import AbstractAuthorizationService
 
 
 class PermissiveAuthorizationService(AbstractAuthorizationService):
     """
-    Phase 1 implementation: allows all operations.
+    Permissive implementation: allows all operations.
 
-    This provides the authorization abstraction from day one,
-    making it easy to implement actual RBAC in a later phase
-    without changing the calling code.
-
-    All methods return True, effectively disabling authorization
-    checks while maintaining the interface contract.
+    Placeholder until actual RBAC is implemented.
     """
 
     async def can_view_item(self, user: User, item: CatalogItem) -> bool:
-        """Check if user can view a catalog item. Always returns True."""
-        # TODO: Implement actual RBAC in Phase 9
+        """Always returns True."""
         return True
 
     async def can_edit_item(self, user: User, item: CatalogItem) -> bool:
-        """Check if user can edit a catalog item. Always returns True."""
+        """Always returns True."""
         return True
 
     async def can_delete_item(self, user: User, item: CatalogItem) -> bool:
-        """Check if user can delete a catalog item. Always returns True."""
+        """Always returns True."""
         return True
 
     async def can_create_item(self, user: User) -> bool:
-        """Check if user can create new catalog items. Always returns True."""
+        """Always returns True."""
         return True
 
     async def can_manage_team(self, user: User, team_id: str) -> bool:
-        """Check if user can manage a team. Always returns True."""
+        """Always returns True."""
         return True
 
     async def can_view_team(self, user: User, team_id: str) -> bool:
-        """Check if user can view team details. Always returns True."""
+        """Always returns True."""
         return True
+
+    # -------------------------------------------------------------------------
+    # Role-based authorization
+    # -------------------------------------------------------------------------
+
+    async def is_admin(self, user: User) -> bool:
+        """Check if user has admin role using User.is_admin property."""
+        return user.is_admin
+
+    async def require_admin(self, user: User) -> None:
+        """Raise AuthorizationError if user is not an admin."""
+        if not user.is_admin:
+            raise AuthorizationError("Admin role required")
+
+    async def can_manage_users(self, user: User) -> bool:
+        """Only admins can manage other users."""
+        return user.is_admin
