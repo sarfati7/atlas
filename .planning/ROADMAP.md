@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Web Frontend Core** - Authentication UI, catalog browser, profile dashboard
 - [x] **Phase 7: Web Frontend Configuration** - Profile editor, version history, import
 - [x] **Phase 8: CLI Sync Tool** - Atomic sync, authentication, cross-platform support
-- [ ] **Phase 9: Governance & Admin** - Admin panel, audit logging, team management
+- [x] **Phase 9: Governance & Admin** - Admin panel, audit logging, team management, usage analytics
 
 ## Phase Details
 
@@ -179,10 +179,10 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Domain layer (User role, AuditLog entity) and database migration
-- [ ] 09-02-PLAN.md — RBAC authorization service and team management API
-- [ ] 09-03-PLAN.md — User management and audit log API endpoints
-- [ ] 09-04-PLAN.md — Admin panel frontend (team and user management UI)
+- [x] 09-01-PLAN.md — Domain layer (User role, AuditLog entity) and database migration
+- [x] 09-02-PLAN.md — RBAC authorization service and team management API
+- [x] 09-03-PLAN.md — User management and audit log API endpoints
+- [x] 09-04-PLAN.md — Admin panel frontend (team and user management UI)
 - [ ] 09-05-PLAN.md — Usage analytics backend and dashboard with audit log viewer
 
 ## Progress
@@ -200,7 +200,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 6. Web Frontend Core | 5/5 | Complete | 2026-01-24 |
 | 7. Web Frontend Configuration | 5/5 | Complete | 2026-01-25 |
 | 8. CLI Sync Tool | 5/5 | Complete | 2026-01-25 |
-| 9. Governance & Admin | 0/5 | Not started | - |
+| 9. Governance & Admin | 4/5 | In Progress | - |
 
 ---
 *Roadmap created: 2025-01-23*
