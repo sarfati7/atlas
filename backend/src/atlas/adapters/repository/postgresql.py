@@ -11,6 +11,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from atlas.adapters.repository.interface import AbstractRepository
 from atlas.adapters.repository.models import (
+    AppSettingsModel,
     AuditLogModel,
     TeamModel,
     UsageEventModel,
@@ -484,3 +485,95 @@ class PostgreSQLRepository(AbstractRepository):
             metadata=model.event_metadata if model.event_metadata else {},
             created_at=model.created_at,
         )
+
+    # -------------------------------------------------------------------------
+    # App settings operations
+    # -------------------------------------------------------------------------
+
+    async def get_app_setting(self, key: str) -> Optional[str]:
+        """Get a single app setting value by key."""
+        from atlas.adapters.repository.encryption import decrypt_value
+
+        statement = select(AppSettingsModel).where(AppSettingsModel.key == key)
+        result = await self._session.execute(statement)
+        model = result.scalar_one_or_none()
+
+        if model is None:
+            return None
+
+        if model.is_secret:
+            return decrypt_value(model.value)
+        return model.value
+
+    async def set_app_setting(
+        self,
+        key: str,
+        value: str,
+        is_secret: bool = False,
+        user_id: Optional[UUID] = None,
+    ) -> None:
+        """Set an app setting value."""
+        from atlas.adapters.repository.encryption import encrypt_value
+
+        stored_value = encrypt_value(value) if is_secret else value
+
+        existing = await self._session.get(AppSettingsModel, key)
+        if existing:
+            existing.value = stored_value
+            existing.is_secret = is_secret
+            existing.updated_at = datetime.utcnow()
+            existing.updated_by = user_id
+            self._session.add(existing)
+        else:
+            model = AppSettingsModel(
+                key=key,
+                value=stored_value,
+                is_secret=is_secret,
+                updated_at=datetime.utcnow(),
+                updated_by=user_id,
+            )
+            self._session.add(model)
+
+        await self._session.commit()
+
+    async def get_all_app_settings(self) -> dict[str, str]:
+        """Get all app settings as a dictionary."""
+        from atlas.adapters.repository.encryption import decrypt_value
+
+        statement = select(AppSettingsModel)
+        result = await self._session.execute(statement)
+        models = result.scalars().all()
+
+        settings_dict = {}
+        for model in models:
+            if model.is_secret:
+                settings_dict[model.key] = decrypt_value(model.value)
+            else:
+                settings_dict[model.key] = model.value
+
+        return settings_dict
+
+    async def delete_app_setting(self, key: str) -> bool:
+        """Delete an app setting by key."""
+        model = await self._session.get(AppSettingsModel, key)
+        if not model:
+            return False
+        await self._session.delete(model)
+        await self._session.commit()
+        return True
+
+    async def get_app_setting_metadata(self, key: str) -> Optional[dict]:
+        """Get app setting metadata without decrypting the value."""
+        statement = select(AppSettingsModel).where(AppSettingsModel.key == key)
+        result = await self._session.execute(statement)
+        model = result.scalar_one_or_none()
+
+        if model is None:
+            return None
+
+        return {
+            "key": model.key,
+            "is_secret": model.is_secret,
+            "updated_at": model.updated_at,
+            "updated_by": model.updated_by,
+        }

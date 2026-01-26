@@ -4,7 +4,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../api'
-import type { CreateTeamRequest, UpdateTeamRequest, UpdateUserRoleRequest } from '../types'
+import type { CreateTeamRequest, UpdateTeamRequest, UpdateUserRoleRequest, GitHubSettingsRequest } from '../types'
 
 /**
  * Query key factory for admin queries.
@@ -257,5 +257,54 @@ export function useResourceAuditTrail(resourceType: string, resourceId: string) 
     queryKey: [...adminKeys.all, 'audit', 'trail', resourceType, resourceId] as const,
     queryFn: () => adminApi.fetchResourceAuditTrail(resourceType, resourceId),
     enabled: !!resourceType && !!resourceId,
+  })
+}
+
+// Settings hooks
+
+/**
+ * Hook to fetch GitHub settings.
+ */
+export function useGitHubSettings() {
+  return useQuery({
+    queryKey: [...adminKeys.all, 'settings', 'github'] as const,
+    queryFn: () => adminApi.fetchGitHubSettings(),
+  })
+}
+
+/**
+ * Hook to update GitHub settings.
+ */
+export function useUpdateGitHubSettings() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: GitHubSettingsRequest) => adminApi.updateGitHubSettings(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminKeys.all, 'settings', 'github'] })
+    },
+  })
+}
+
+/**
+ * Hook to test GitHub connection.
+ */
+export function useTestGitHubConnection() {
+  return useMutation({
+    mutationFn: () => adminApi.testGitHubConnection(),
+  })
+}
+
+/**
+ * Hook to remove GitHub settings.
+ */
+export function useRemoveGitHubSettings() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => adminApi.removeGitHubSettings(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminKeys.all, 'settings', 'github'] })
+    },
   })
 }

@@ -1,4 +1,4 @@
-"""Content repository interface - Abstract contract for git content operations."""
+"""Catalog repository interface - Abstract contract for git catalog operations."""
 
 from abc import ABC, abstractmethod
 from typing import Optional
@@ -6,12 +6,11 @@ from typing import Optional
 from atlas.domain.entities import ConfigurationVersion
 
 
-class AbstractContentRepository(ABC):
+class AbstractCatalogRepository(ABC):
     """
-    Abstract repository interface for git content operations.
+    Abstract repository interface for git catalog operations.
 
-    Manages the actual file content stored in git (skills, MCPs, tools).
-    Metadata is managed by CatalogRepository.
+    Manages catalog content stored in git (skills, MCPs, tools).
     """
 
     @abstractmethod
@@ -85,7 +84,6 @@ class AbstractContentRepository(ABC):
         Get commit history for a file.
 
         Returns list of versions ordered by timestamp (newest first).
-        Limited to prevent unbounded queries.
         """
         raise NotImplementedError
 

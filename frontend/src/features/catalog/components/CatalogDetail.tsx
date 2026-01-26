@@ -4,15 +4,14 @@
  * Displays full metadata and documentation for a catalog item.
  */
 
-import { format } from 'date-fns'
-import { ArrowLeft, Calendar, GitBranch, Users } from 'lucide-react'
+import { ArrowLeft, Building2, GitBranch, Users, User } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DocumentationViewer } from './DocumentationViewer'
-import type { CatalogItemDetail as CatalogItemDetailType, CatalogItemType } from '../types'
+import type { CatalogItemDetail as CatalogItemDetailType, CatalogItemType, CatalogScope } from '../types'
 
 const typeColors: Record<CatalogItemType, string> = {
   skill: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -24,6 +23,12 @@ const typeLabels: Record<CatalogItemType, string> = {
   skill: 'Skill',
   mcp: 'MCP',
   tool: 'Tool',
+}
+
+const scopeConfig: Record<CatalogScope, { label: string; icon: typeof Building2 }> = {
+  org: { label: 'Organization', icon: Building2 },
+  team: { label: 'Team', icon: Users },
+  user: { label: 'Personal', icon: User },
 }
 
 interface CatalogDetailProps {
@@ -70,20 +75,15 @@ export function CatalogDetail({ item }: CatalogDetailProps) {
         {/* Metadata row */}
         <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>Created {format(new Date(item.created_at), 'MMM d, yyyy')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>Updated {format(new Date(item.updated_at), 'MMM d, yyyy')}</span>
+            {(() => {
+              const ScopeIcon = scopeConfig[item.scope].icon
+              return <ScopeIcon className="h-4 w-4" />
+            })()}
+            <span>{scopeConfig[item.scope].label}</span>
           </div>
           <div className="flex items-center gap-2">
             <GitBranch className="h-4 w-4" />
             <span className="font-mono text-xs">{item.git_path}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span>{item.usage_count} uses</span>
           </div>
         </div>
       </div>

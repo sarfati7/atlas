@@ -118,3 +118,23 @@ export interface AuditLogsResponse {
   page: number
   page_size: number
 }
+
+// Admin settings types
+
+export interface GitHubSettings {
+  repo: string | null
+  token_configured: boolean
+  updated_at: string | null
+  updated_by: string | null
+}
+
+export interface GitHubSettingsRequest {
+  repo: string
+  token: string
+}
+
+export interface ConnectionTestResponse {
+  success: boolean
+  message: string
+  repo_name: string | null
+}

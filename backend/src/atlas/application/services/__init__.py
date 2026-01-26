@@ -1,25 +1,25 @@
 """Application services - Business logic orchestration."""
 
-from atlas.application.services.configuration_service import (
-    ConfigurationNotFoundError,
-    ConfigurationService,
-    VersionNotFoundError,
-)
-from atlas.application.services.user_profile_service import (
+from atlas.adapters.catalog import VersionNotFoundError
+from atlas.application.services.atlas_service import (
+    AtlasService,
+    CatalogItem,
+    CatalogItemDetail,
     CatalogItemSummary,
+    ConfigurationNotFoundError,
     TeamSummary,
     UserDashboard,
     UserNotFoundError,
-    UserProfileService,
 )
 
 __all__ = [
-    "ConfigurationService",
+    "AtlasService",
+    "CatalogItem",
+    "CatalogItemDetail",
+    "CatalogItemSummary",
     "ConfigurationNotFoundError",
-    "VersionNotFoundError",
-    "UserProfileService",
+    "TeamSummary",
     "UserDashboard",
     "UserNotFoundError",
-    "TeamSummary",
-    "CatalogItemSummary",
+    "VersionNotFoundError",
 ]

@@ -96,3 +96,15 @@ class UsageEventModel(SQLModel, table=True):
     action: str  # sync, view, execute
     event_metadata: dict[str, Any] = Field(default_factory=dict, sa_type=JSON)
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
+
+
+class AppSettingsModel(SQLModel, table=True):
+    """SQLModel table for application-level settings."""
+
+    __tablename__ = "app_settings"
+
+    key: str = Field(primary_key=True)
+    value: str
+    is_secret: bool = Field(default=False)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_by: UUID | None = Field(default=None, foreign_key="users.id")

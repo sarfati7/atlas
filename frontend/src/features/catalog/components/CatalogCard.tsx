@@ -5,7 +5,8 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { CatalogItemSummary, CatalogItemType } from '../types'
+import { Building2, Users, User } from 'lucide-react'
+import type { CatalogItemSummary, CatalogItemType, CatalogScope } from '../types'
 
 interface CatalogCardProps {
   item: CatalogItemSummary
@@ -26,15 +27,25 @@ const TYPE_STYLES: Record<CatalogItemType, { label: string; className: string }>
   },
 }
 
+const SCOPE_ICONS: Record<CatalogScope, typeof Building2> = {
+  org: Building2,
+  team: Users,
+  user: User,
+}
+
 export function CatalogCard({ item }: CatalogCardProps) {
   const typeStyle = TYPE_STYLES[item.type]
+  const ScopeIcon = SCOPE_ICONS[item.scope]
 
   return (
     <Link to={`/catalog/${item.id}`} className="block group">
       <Card className="h-full transition-colors hover:border-muted-foreground/50">
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-base line-clamp-1">{item.name}</CardTitle>
+            <div className="flex items-center gap-2 min-w-0">
+              <ScopeIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <CardTitle className="text-base line-clamp-1">{item.name}</CardTitle>
+            </div>
             <Badge variant="outline" className={typeStyle.className}>
               {typeStyle.label}
             </Badge>

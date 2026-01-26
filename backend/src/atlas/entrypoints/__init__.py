@@ -1,19 +1,23 @@
 """Entrypoints layer - HTTP routes, CLI commands, WebSocket handlers."""
 
 from atlas.entrypoints.dependencies import (
+    Atlas,
     AuthorizationSvc,
-    ContentRepo,
+    CatalogRepo,
     Repo,
+    get_atlas_service,
     get_authorization_service,
-    get_content_repository,
+    get_catalog_repository,
     get_repository,
 )
 
 __all__ = [
+    "Atlas",
     "AuthorizationSvc",
-    "ContentRepo",
+    "CatalogRepo",
     "Repo",
+    "get_atlas_service",
     "get_authorization_service",
-    "get_content_repository",
+    "get_catalog_repository",
     "get_repository",
 ]

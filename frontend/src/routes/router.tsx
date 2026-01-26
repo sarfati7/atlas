@@ -10,6 +10,7 @@ import { AdminTeamsPage } from './admin-teams'
 import { AdminUsersPage } from './admin-users'
 import { AdminAnalyticsPage } from './admin-analytics'
 import { AdminAuditLogsPage } from './admin-audit'
+import { AdminSettingsPage } from './admin-settings'
 import { RootLayout } from '@/components/layout'
 import { guestLoader, protectedLoader } from '@/lib/loaders'
 
@@ -92,6 +93,11 @@ export const router = createBrowserRouter([
       {
         path: '/admin/audit',
         element: <AdminAuditLogsPage />,
+        loader: protectedLoader,
+      },
+      {
+        path: '/admin/settings',
+        element: <AdminSettingsPage />,
         loader: protectedLoader,
       },
     ],

@@ -5,17 +5,13 @@ from typing import Optional
 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-from atlas.domain.interfaces.email_service import AbstractEmailService
+from atlas.adapters.email.interface import AbstractEmailService
 
 logger = logging.getLogger(__name__)
 
 
 class SMTPEmailService(AbstractEmailService):
-    """
-    Email service that sends emails via SMTP.
-
-    Uses fastapi-mail for async email delivery.
-    """
+    """Email service that sends emails via SMTP."""
 
     def __init__(
         self,
@@ -25,16 +21,6 @@ class SMTPEmailService(AbstractEmailService):
         smtp_password: Optional[str] = None,
         email_from: str = "noreply@atlas.local",
     ) -> None:
-        """
-        Initialize SMTP email service.
-
-        Args:
-            smtp_host: SMTP server hostname
-            smtp_port: SMTP server port (default 587 for TLS)
-            smtp_user: SMTP username (optional, for authenticated SMTP)
-            smtp_password: SMTP password (optional)
-            email_from: From address for outgoing emails
-        """
         self._config = ConnectionConfig(
             MAIL_USERNAME=smtp_user or "",
             MAIL_PASSWORD=smtp_password or "",
@@ -49,12 +35,7 @@ class SMTPEmailService(AbstractEmailService):
         self._mail = FastMail(self._config)
 
     async def send_password_reset(self, to_email: str, reset_url: str) -> None:
-        """
-        Send a password reset email via SMTP.
-
-        Handles connection errors gracefully (logs error, doesn't crash).
-        This prevents revealing email existence through error responses.
-        """
+        """Send a password reset email via SMTP."""
         html_body = f"""
         <html>
         <body>
@@ -78,5 +59,4 @@ class SMTPEmailService(AbstractEmailService):
             await self._mail.send_message(message)
             logger.info(f"Password reset email sent to {to_email}")
         except Exception as e:
-            # Log error but don't crash - this prevents revealing email existence
             logger.error(f"Failed to send password reset email to {to_email}: {e}")

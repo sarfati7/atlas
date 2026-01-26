@@ -8,8 +8,6 @@ class AbstractEmailService(ABC):
     Abstract email service interface.
 
     Defines operations for sending various types of emails.
-    Implementations include ConsoleEmailService (dev/test)
-    and SMTPEmailService (production).
     """
 
     @abstractmethod
@@ -20,9 +18,5 @@ class AbstractEmailService(ABC):
         Args:
             to_email: Recipient email address
             reset_url: Full URL for password reset (includes token)
-
-        Note:
-            Implementation should handle delivery failures gracefully
-            (log error, don't crash) to avoid revealing email existence.
         """
         raise NotImplementedError

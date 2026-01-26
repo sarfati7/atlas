@@ -3,7 +3,7 @@
  */
 
 import { Link, useLocation } from 'react-router-dom'
-import { Activity, Book, FileText, LayoutDashboard, LogIn, LogOut, Settings, Shield, Users, UsersRound } from 'lucide-react'
+import { Activity, Book, FileText, LayoutDashboard, LogIn, LogOut, Settings, Settings2, Shield, Users, UsersRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
@@ -112,6 +112,12 @@ export function Sidebar() {
               icon={<FileText className="h-4 w-4" />}
               label="Audit Logs"
               isActive={location.pathname.startsWith('/admin/audit')}
+            />
+            <NavItem
+              to="/admin/settings"
+              icon={<Settings2 className="h-4 w-4" />}
+              label="Settings"
+              isActive={location.pathname.startsWith('/admin/settings')}
             />
           </>
         )}

@@ -19,6 +19,9 @@ import type {
   UsageTimeline,
   AuditLogsResponse,
   AuditLog,
+  GitHubSettings,
+  GitHubSettingsRequest,
+  ConnectionTestResponse,
 } from '../types'
 
 export const adminApi = {
@@ -245,5 +248,40 @@ export const adminApi = {
       `/api/v1/admin/audit/resources/${resourceType}/${resourceId}`
     )
     return response.data
+  },
+
+  // Settings endpoints
+
+  /**
+   * Get GitHub integration settings.
+   */
+  async fetchGitHubSettings(): Promise<GitHubSettings> {
+    const response = await apiClient.get<GitHubSettings>('/api/v1/admin/settings/github')
+    return response.data
+  },
+
+  /**
+   * Update GitHub integration settings.
+   */
+  async updateGitHubSettings(data: GitHubSettingsRequest): Promise<GitHubSettings> {
+    const response = await apiClient.put<GitHubSettings>('/api/v1/admin/settings/github', data)
+    return response.data
+  },
+
+  /**
+   * Test GitHub connection.
+   */
+  async testGitHubConnection(): Promise<ConnectionTestResponse> {
+    const response = await apiClient.post<ConnectionTestResponse>(
+      '/api/v1/admin/settings/github/test'
+    )
+    return response.data
+  },
+
+  /**
+   * Remove GitHub integration settings.
+   */
+  async removeGitHubSettings(): Promise<void> {
+    await apiClient.delete('/api/v1/admin/settings/github')
   },
 }

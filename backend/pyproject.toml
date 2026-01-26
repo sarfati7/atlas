@@ -21,6 +21,8 @@ dependencies = [
     "email-validator>=2.2.0",
     "fastapi-mail>=1.6.0",
     "python-multipart>=0.0.18",
+    "pyyaml>=6.0.0",
+    "cryptography>=44.0.0",
 ]
 
 [project.optional-dependencies]

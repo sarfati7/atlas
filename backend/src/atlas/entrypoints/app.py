@@ -9,6 +9,7 @@ from slowapi.util import get_remote_address
 from atlas.entrypoints.api.routes import (
     admin_analytics_router,
     admin_audit_router,
+    admin_settings_router,
     admin_teams_router,
     admin_users_router,
     auth_router,
@@ -40,6 +41,7 @@ def create_app() -> FastAPI:
     # Include routers with /api/v1 prefix
     app.include_router(admin_analytics_router, prefix="/api/v1")
     app.include_router(admin_audit_router, prefix="/api/v1")
+    app.include_router(admin_settings_router, prefix="/api/v1")
     app.include_router(admin_teams_router, prefix="/api/v1")
     app.include_router(admin_users_router, prefix="/api/v1")
     app.include_router(auth_router, prefix="/api/v1")

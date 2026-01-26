@@ -1,7 +1,7 @@
 /**
- * Configuration feature types.
+ * Configuration types matching backend API contract.
  *
- * Maps to backend configuration API responses.
+ * Matches backend/src/atlas/entrypoints/api/routes/configuration.py
  */
 
 export interface Configuration {

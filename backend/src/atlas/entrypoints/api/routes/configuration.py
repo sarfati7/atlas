@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel
 
 from atlas.application.services import ConfigurationNotFoundError, VersionNotFoundError
-from atlas.entrypoints.dependencies import ConfigService, CurrentUser
+from atlas.entrypoints.dependencies import Atlas, CurrentUser
 
 router = APIRouter(prefix="/configuration", tags=["configuration"])
 
@@ -24,7 +24,7 @@ class ConfigurationUpdateRequest(BaseModel):
     """Request to update configuration content."""
 
     content: str
-    message: Optional[str] = None  # Optional custom commit message
+    message: Optional[str] = None
 
 
 class VersionResponse(BaseModel):
@@ -46,14 +46,14 @@ class VersionHistoryResponse(BaseModel):
 @router.get("/me", response_model=ConfigurationResponse)
 async def get_my_configuration(
     current_user: CurrentUser,
-    config_service: ConfigService,
+    atlas: Atlas,
 ) -> ConfigurationResponse:
     """
     Get current user's configuration.
 
     Returns empty content if user has not created a configuration yet.
     """
-    content, config = await config_service.get_configuration(current_user.id)
+    content, config = await atlas.get_user_configuration(current_user.id)
     return ConfigurationResponse(
         content=content,
         commit_sha=config.current_commit_sha,
@@ -65,7 +65,7 @@ async def get_my_configuration(
 async def update_my_configuration(
     body: ConfigurationUpdateRequest,
     current_user: CurrentUser,
-    config_service: ConfigService,
+    atlas: Atlas,
 ) -> ConfigurationResponse:
     """
     Update current user's configuration.
@@ -73,7 +73,7 @@ async def update_my_configuration(
     Creates a new git commit with the updated content.
     Optionally accepts a custom commit message.
     """
-    config = await config_service.save_configuration(
+    config = await atlas.save_user_configuration(
         user_id=current_user.id,
         content=body.content,
         message=body.message,
@@ -89,7 +89,7 @@ async def update_my_configuration(
 @router.get("/me/history", response_model=VersionHistoryResponse)
 async def get_configuration_history(
     current_user: CurrentUser,
-    config_service: ConfigService,
+    atlas: Atlas,
     limit: int = Query(default=50, ge=1, le=100, description="Max versions to return"),
 ) -> VersionHistoryResponse:
     """
@@ -97,7 +97,7 @@ async def get_configuration_history(
 
     Returns list of all commits (versions) for the configuration file.
     """
-    versions = await config_service.get_version_history(
+    versions = await atlas.get_configuration_versions(
         user_id=current_user.id,
         limit=limit,
     )
@@ -120,7 +120,7 @@ async def get_configuration_history(
 async def rollback_configuration(
     commit_sha: str,
     current_user: CurrentUser,
-    config_service: ConfigService,
+    atlas: Atlas,
 ) -> ConfigurationResponse:
     """
     Rollback configuration to a previous version.
@@ -128,7 +128,7 @@ async def rollback_configuration(
     Creates a new commit with the content from the specified version.
     """
     try:
-        config = await config_service.rollback_to_version(
+        config = await atlas.rollback_configuration_to_version(
             user_id=current_user.id,
             commit_sha=commit_sha,
         )
@@ -143,8 +143,7 @@ async def rollback_configuration(
             detail=f"Version {commit_sha} not found",
         )
 
-    # Get the rolled-back content
-    content, _ = await config_service.get_configuration(current_user.id)
+    content, _ = await atlas.get_user_configuration(current_user.id)
 
     return ConfigurationResponse(
         content=content,
@@ -157,24 +156,21 @@ async def rollback_configuration(
 async def import_configuration(
     file: UploadFile,
     current_user: CurrentUser,
-    config_service: ConfigService,
+    atlas: Atlas,
 ) -> ConfigurationResponse:
     """
     Import configuration from uploaded .md file.
 
     Accepts a markdown file and saves it as the user's configuration.
     """
-    # Validate file type
     if not file.filename or not file.filename.endswith(".md"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be a .md file",
         )
 
-    # Read and validate content
     content_bytes = await file.read()
 
-    # Check file size (1MB limit)
     if len(content_bytes) > 1024 * 1024:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -189,8 +185,7 @@ async def import_configuration(
             detail="File must be valid UTF-8 text",
         )
 
-    # Save via service
-    config = await config_service.import_configuration(
+    config = await atlas.import_user_configuration(
         user_id=current_user.id,
         content=content_str,
     )

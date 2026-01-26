@@ -41,10 +41,30 @@ Repo = Annotated[AbstractRepository, Depends(get_repository)]
 # -----------------------------------------------------------------------------
 
 
-async def get_catalog_repository() -> AbstractCatalogRepository:
-    """Provide catalog repository implementation."""
+async def get_catalog_repository(
+    session: Annotated[AsyncSession, Depends(get_session)]
+) -> AbstractCatalogRepository:
+    """
+    Provide catalog repository implementation.
+
+    Priority:
+    1. Database settings (if configured via admin UI)
+    2. Environment variables
+    3. In-memory fallback
+    """
+    # Check database settings first
+    repo = PostgreSQLRepository(session)
+    db_token = await repo.get_app_setting("github_token")
+    db_repo = await repo.get_app_setting("github_repo")
+
+    if db_token and db_repo:
+        return GitHubCatalogRepository(db_token, db_repo)
+
+    # Fall back to environment variables
     if settings.github_token and settings.github_repo:
         return GitHubCatalogRepository(settings.github_token, settings.github_repo)
+
+    # No GitHub config, use in-memory
     from atlas.adapters.catalog import InMemoryCatalogRepository
     return InMemoryCatalogRepository()
 

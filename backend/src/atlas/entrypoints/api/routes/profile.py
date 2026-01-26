@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from atlas.application.services import UserNotFoundError
 from atlas.domain.entities import CatalogItemType
-from atlas.entrypoints.dependencies import CurrentUser, ProfileService
+from atlas.entrypoints.dependencies import Atlas, CurrentUser
 
 
 class EffectiveConfigurationResponse(BaseModel):
@@ -25,7 +25,7 @@ router = APIRouter(prefix="/profile", tags=["profile"])
 @router.get("/dashboard")
 async def get_dashboard(
     current_user: CurrentUser,
-    profile_service: ProfileService,
+    atlas: Atlas,
 ):
     """
     Get current user's dashboard data.
@@ -33,7 +33,7 @@ async def get_dashboard(
     Returns aggregated view of user's teams, available items count, and config status.
     """
     try:
-        return await profile_service.get_dashboard(current_user.id)
+        return await atlas.get_dashboard(current_user.id)
     except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -44,32 +44,31 @@ async def get_dashboard(
 @router.get("/available-items")
 async def get_available_items(
     current_user: CurrentUser,
-    profile_service: ProfileService,
-    type: Optional[CatalogItemType] = Query(default=None, description="Filter by item type"),
+    atlas: Atlas,
+    type: Optional[CatalogItemType] = Query(
+        default=None, description="Filter by item type"
+    ),
 ):
     """
     Get catalog items available to current user.
 
-    Returns company-wide items plus items from user's teams.
+    Returns all catalog items (company-wide).
     Optionally filter by type (skill, mcp, tool).
     """
-    items = await profile_service.get_available_items(current_user.id)
-    if type is not None:
-        items = [i for i in items if i.type == type]
-    return items
+    return await atlas.get_available_items(current_user.id, item_type=type)
 
 
 @router.get("/effective-configuration")
 async def get_effective_configuration(
     current_user: CurrentUser,
-    profile_service: ProfileService,
+    atlas: Atlas,
 ) -> EffectiveConfigurationResponse:
     """
     Get user's effective configuration with inheritance chain.
 
     Shows merged configuration from org -> team -> user levels.
     """
-    config = await profile_service.get_effective_configuration(current_user.id)
+    config = await atlas.get_effective_configuration(current_user.id)
     return EffectiveConfigurationResponse(
         content=config.content,
         org_applied=bool(config.org_content),

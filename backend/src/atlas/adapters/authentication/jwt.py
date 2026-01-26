@@ -8,7 +8,7 @@ import jwt
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from pwdlib import PasswordHash
 
-from atlas.domain.interfaces.auth_service import AbstractAuthService
+from atlas.adapters.authentication.interface import AbstractAuthService
 
 
 class JWTAuthService(AbstractAuthService):
@@ -27,26 +27,13 @@ class JWTAuthService(AbstractAuthService):
         refresh_token_expire_days: int = 7,
         password_reset_salt: str = "password-reset",
     ) -> None:
-        """
-        Initialize the JWT auth service.
-
-        Args:
-            secret_key: Secret key for JWT signing and password reset tokens
-            algorithm: JWT signing algorithm (default HS256)
-            access_token_expire_minutes: Access token lifetime in minutes
-            refresh_token_expire_days: Refresh token lifetime in days
-            password_reset_salt: Salt for password reset token serializer
-        """
         self._secret_key = secret_key
         self._algorithm = algorithm
         self._access_token_expire_minutes = access_token_expire_minutes
         self._refresh_token_expire_days = refresh_token_expire_days
         self._password_reset_salt = password_reset_salt
 
-        # Use recommended Argon2id configuration
         self._password_hasher = PasswordHash.recommended()
-
-        # URL-safe serializer for password reset tokens
         self._reset_serializer = URLSafeTimedSerializer(
             secret_key, salt=password_reset_salt
         )
@@ -114,5 +101,4 @@ class JWTAuthService(AbstractAuthService):
         except BadSignature:
             return None
         except ValueError:
-            # Invalid UUID format
             return None

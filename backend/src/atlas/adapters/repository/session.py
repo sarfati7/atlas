@@ -1,4 +1,4 @@
-"""Async database session factory for PostgreSQL."""
+"""Async database session factory."""
 
 from typing import AsyncGenerator
 
@@ -20,7 +20,7 @@ engine: AsyncEngine = create_async_engine(
 async_session_factory = sessionmaker(
     engine,
     class_=AsyncSession,
-    expire_on_commit=False,  # Critical: prevents implicit I/O after commit
+    expire_on_commit=False,
 )
 
 
