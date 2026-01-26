@@ -28,7 +28,7 @@ class UserConfiguration(BaseModel):
 
     id: UUID = Field(default_factory=uuid4)
     user_id: UUID
-    git_path: str  # e.g., "configs/users/{user_id}/claude.md"
+    git_path: str  # e.g., "users/{user_id}/claude.md"
     current_commit_sha: str = ""  # Empty until first save
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
