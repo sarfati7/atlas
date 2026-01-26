@@ -5,11 +5,10 @@ Command-line tool to sync Claude configuration from the Atlas platform to your l
 ## Installation
 
 ```bash
-# From the cli directory
-cd cli
-uv sync
-uv pip install -e .
+pip install git+https://github.com/sarfati7/atlas.git#subdirectory=cli
 ```
+
+That's it. The `atlas` command is now available.
 
 ## Usage
 
@@ -84,6 +83,11 @@ Run `atlas doctor` to check connectivity to the Atlas API.
 ## Development
 
 ```bash
+# Clone and install in development mode
+cd cli
+uv sync
+uv pip install -e .
+
 # Install dev dependencies
 uv sync --dev
 
