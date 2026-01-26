@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { FileUp, Replace, PlusCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileUp, Replace, PlusCircle, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -26,9 +26,18 @@ export function ImportTab({ hasExistingContent, onImportSuccess }: ImportTabProp
   const [fileContent, setFileContent] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
   const [showMergeDialog, setShowMergeDialog] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const importConfig = useImportConfiguration()
   const { content: currentContent, setOriginalContent } = useDraftStore()
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => setShowSuccess(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showSuccess])
 
   const handleFileAccepted = async (file: File) => {
     setError(null)
@@ -60,6 +69,7 @@ export function ImportTab({ hasExistingContent, onImportSuccess }: ImportTabProp
   const handleImport = async (mode: MergeMode, content?: string) => {
     const contentToUse = content ?? fileContent
     setShowMergeDialog(false)
+    setError(null)
 
     if (mode === 'append' && currentContent.trim()) {
       // Append: merge new content after existing
@@ -67,6 +77,7 @@ export function ImportTab({ hasExistingContent, onImportSuccess }: ImportTabProp
       // Update draft store directly for append mode
       setOriginalContent(mergedContent)
       setSelectedFile(null)
+      setShowSuccess(true)
       onImportSuccess()
     } else {
       // Replace: use the import endpoint which creates a git commit
@@ -75,6 +86,7 @@ export function ImportTab({ hasExistingContent, onImportSuccess }: ImportTabProp
           onSuccess: () => {
             setSelectedFile(null)
             setFileContent('')
+            setShowSuccess(true)
             onImportSuccess()
           },
           onError: (err) => {
@@ -112,6 +124,15 @@ export function ImportTab({ hasExistingContent, onImportSuccess }: ImportTabProp
 
           {error && (
             <p className="text-sm text-destructive">{error}</p>
+          )}
+
+          {showSuccess && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+              <CheckCircle className="h-5 w-5 text-emerald-500" />
+              <span className="text-sm text-emerald-500">
+                Configuration imported and saved successfully!
+              </span>
+            </div>
           )}
 
           {selectedFile && !showMergeDialog && (
