@@ -119,6 +119,115 @@ class TestStatusCommand:
                 assert "bytes" in result.output
 
 
+class TestPushCommand:
+    """Tests for push command."""
+
+    def test_push_requires_auth(self) -> None:
+        """push shows error when not authenticated."""
+        with patch("atlas_cli.commands.push.is_authenticated", return_value=False):
+            result = runner.invoke(app, ["push"])
+
+            assert result.exit_code == 1
+            assert "Not logged in" in result.output
+
+    def test_push_dry_run_no_items(self) -> None:
+        """push --dry-run with no items shows info message."""
+        with patch("atlas_cli.commands.push.is_authenticated", return_value=True):
+            with patch("atlas_cli.commands.push._scan_local_items", return_value=[]):
+                result = runner.invoke(app, ["push", "--dry-run"])
+
+                assert result.exit_code == 0
+                assert "No items found" in result.output
+
+    def test_push_dry_run_with_items(self) -> None:
+        """push --dry-run shows items table."""
+        mock_items = [
+            {
+                "name": "test-skill",
+                "type": "skill",
+                "description": "Test description",
+                "tags": ["test"],
+                "content": "# Test",
+                "path": "/test/path",
+            }
+        ]
+
+        with patch("atlas_cli.commands.push.is_authenticated", return_value=True):
+            with patch("atlas_cli.commands.push._scan_local_items", return_value=mock_items):
+                result = runner.invoke(app, ["push", "--dry-run"])
+
+                assert result.exit_code == 0
+                assert "test-skill" in result.output
+                assert "Dry run" in result.output
+
+
+class TestPullCommand:
+    """Tests for pull command."""
+
+    def test_pull_requires_auth(self) -> None:
+        """pull shows error when not authenticated."""
+        with patch("atlas_cli.commands.pull.is_authenticated", return_value=False):
+            result = runner.invoke(app, ["pull"])
+
+            assert result.exit_code == 1
+            assert "Not logged in" in result.output
+
+    def test_pull_config_only(self) -> None:
+        """pull --config-only only syncs CLAUDE.md."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "content": "# Test config",
+            "commit_sha": "abc1234567890"
+        }
+        mock_response.raise_for_status = MagicMock()
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.return_value = mock_response
+
+        with patch("atlas_cli.commands.pull.is_authenticated", return_value=True):
+            with patch("atlas_cli.commands.pull.create_client", return_value=mock_client):
+                with patch("atlas_cli.commands.pull.read_config", return_value=None):
+                    with patch("atlas_cli.commands.pull.atomic_write"):
+                        result = runner.invoke(app, ["pull", "--config-only"])
+
+                        assert result.exit_code == 0
+                        assert "synced" in result.output or "CLAUDE.md" in result.output
+
+    def test_pull_dry_run(self) -> None:
+        """pull --dry-run shows preview without writing."""
+        mock_config_response = MagicMock()
+        mock_config_response.json.return_value = {
+            "content": "# Test config",
+            "commit_sha": "abc1234567890"
+        }
+        mock_config_response.raise_for_status = MagicMock()
+
+        mock_catalog_response = MagicMock()
+        mock_catalog_response.json.return_value = {
+            "items": [],
+            "total": 0,
+            "page": 1,
+            "size": 100,
+            "pages": 1
+        }
+        mock_catalog_response.raise_for_status = MagicMock()
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.side_effect = [mock_config_response, mock_catalog_response]
+
+        with patch("atlas_cli.commands.pull.is_authenticated", return_value=True):
+            with patch("atlas_cli.commands.pull.create_client", return_value=mock_client):
+                with patch("atlas_cli.commands.pull.read_config", return_value=None):
+                    result = runner.invoke(app, ["pull", "--dry-run"])
+
+                    assert result.exit_code == 0
+                    assert "Would update" in result.output or "No catalog items" in result.output
+
+
 class TestHelpOutput:
     """Tests for help output."""
 
@@ -129,6 +238,8 @@ class TestHelpOutput:
         assert result.exit_code == 0
         assert "auth" in result.output
         assert "sync" in result.output
+        assert "push" in result.output
+        assert "pull" in result.output
         assert "doctor" in result.output
         assert "status" in result.output
 

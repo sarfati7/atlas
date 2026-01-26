@@ -7,9 +7,10 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel
 
+from atlas.adapters.catalog.exceptions import CatalogPermissionError
 from atlas.application.services.atlas_service import CatalogScope
 from atlas.domain.entities.catalog_item import CatalogItemType
-from atlas.entrypoints.dependencies import Atlas, CurrentUserOptional
+from atlas.entrypoints.dependencies import Atlas, CurrentUser, CurrentUserOptional
 
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
@@ -48,6 +49,34 @@ class CatalogItemResponse(BaseModel):
     documentation: str
     scope: CatalogScope
     scope_id: Optional[UUID] = None
+
+
+class CatalogItemCreateRequest(BaseModel):
+    """Request to create a catalog item."""
+
+    type: CatalogItemType
+    name: str
+    description: str = ""
+    tags: list[str] = []
+    content: str  # Full markdown content (SKILL.md body)
+
+
+class CatalogItemUpdateRequest(BaseModel):
+    """Request to update a catalog item."""
+
+    description: Optional[str] = None
+    tags: Optional[list[str]] = None
+    content: Optional[str] = None
+
+
+class CatalogItemRawResponse(BaseModel):
+    """Raw content for download."""
+
+    name: str
+    type: CatalogItemType
+    description: str
+    tags: list[str]
+    content: str  # Full markdown content
 
 
 @router.get("", response_model=PaginatedCatalog)
@@ -155,3 +184,153 @@ async def refresh_catalog_cache(
     Useful after pushing changes to git repository.
     """
     await atlas.refresh_catalog_cache()
+
+
+@router.post("/items", response_model=CatalogItemResponse, status_code=status.HTTP_201_CREATED)
+async def create_catalog_item(
+    body: CatalogItemCreateRequest,
+    atlas: Atlas,
+    current_user: CurrentUser,
+) -> CatalogItemResponse:
+    """
+    Create a new catalog item in user's namespace.
+
+    Items are stored at users/{user_id}/{type}s/{name}/ in git.
+    """
+    try:
+        item = await atlas.create_catalog_item(
+            user_id=current_user.id,
+            item_type=body.type,
+            name=body.name,
+            description=body.description,
+            tags=body.tags,
+            content=body.content,
+        )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+    return CatalogItemResponse(
+        id=item.id,
+        type=item.type,
+        name=item.name,
+        description=item.description,
+        git_path=item.git_path,
+        tags=item.tags,
+        documentation=item.documentation,
+        scope=item.scope,
+        scope_id=item.scope_id,
+    )
+
+
+@router.put("/items/{item_id}", response_model=CatalogItemResponse)
+async def update_catalog_item(
+    item_id: str,
+    body: CatalogItemUpdateRequest,
+    atlas: Atlas,
+    current_user: CurrentUser,
+) -> CatalogItemResponse:
+    """
+    Update an existing catalog item.
+
+    Only the owner can update their items.
+    """
+    try:
+        item = await atlas.update_catalog_item(
+            user_id=current_user.id,
+            item_id=item_id,
+            description=body.description,
+            tags=body.tags,
+            content=body.content,
+        )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Catalog item not found or you don't have permission to update it",
+        )
+
+    return CatalogItemResponse(
+        id=item.id,
+        type=item.type,
+        name=item.name,
+        description=item.description,
+        git_path=item.git_path,
+        tags=item.tags,
+        documentation=item.documentation,
+        scope=item.scope,
+        scope_id=item.scope_id,
+    )
+
+
+@router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_catalog_item(
+    item_id: str,
+    atlas: Atlas,
+    current_user: CurrentUser,
+) -> None:
+    """
+    Delete a catalog item.
+
+    Only the owner can delete their items.
+    """
+    try:
+        deleted = await atlas.delete_catalog_item(
+            user_id=current_user.id,
+            item_id=item_id,
+        )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Catalog item not found or you don't have permission to delete it",
+        )
+
+
+@router.get("/items/{item_id}/raw", response_model=CatalogItemRawResponse)
+async def get_catalog_item_raw(
+    item_id: str,
+    atlas: Atlas,
+    current_user: CurrentUser,
+) -> CatalogItemRawResponse:
+    """
+    Get raw content of a catalog item for download/sync.
+
+    Returns the full markdown content that can be written to local SKILL.md.
+    """
+    item = await atlas.get_catalog_item(
+        item_id=item_id,
+        user_id=current_user.id,
+        team_ids=current_user.team_ids,
+    )
+
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Catalog item not found",
+        )
+
+    return CatalogItemRawResponse(
+        name=item.name,
+        type=item.type,
+        description=item.description,
+        tags=item.tags,
+        content=item.documentation,
+    )

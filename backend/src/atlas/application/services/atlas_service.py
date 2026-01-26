@@ -474,6 +474,185 @@ class AtlasService:
         return counts
 
     # -------------------------------------------------------------------------
+    # Catalog: Create/Update/Delete items in user's namespace
+    # -------------------------------------------------------------------------
+
+    def _get_user_catalog_path(
+        self, user_id: UUID, item_type: CatalogItemType, name: str
+    ) -> str:
+        """Get git path for user's catalog item."""
+        type_dir = {
+            CatalogItemType.SKILL: "skills",
+            CatalogItemType.MCP: "mcps",
+            CatalogItemType.TOOL: "tools",
+        }[item_type]
+        return f"users/{user_id}/{type_dir}/{name}"
+
+    async def create_catalog_item(
+        self,
+        user_id: UUID,
+        item_type: CatalogItemType,
+        name: str,
+        description: str,
+        tags: list[str],
+        content: str,
+    ) -> CatalogItemDetail:
+        """
+        Create a new catalog item in user's namespace.
+
+        Creates config.yaml and README.md in git.
+        """
+        # Validate name (alphanumeric, hyphens, underscores only)
+        import re
+        if not re.match(r"^[a-zA-Z0-9_-]+$", name):
+            raise ValueError("Name must contain only letters, numbers, hyphens, and underscores")
+
+        base_path = self._get_user_catalog_path(user_id, item_type, name)
+
+        # Check if already exists
+        if await self._catalog_repo.exists(f"{base_path}/README.md"):
+            raise ValueError(f"Item '{name}' already exists")
+
+        # Create config.yaml
+        config_yaml = f"name: {name}\ndescription: {description}\ntags: [{', '.join(tags)}]\n"
+        await self._catalog_repo.save_content(
+            path=f"{base_path}/config.yaml",
+            content=config_yaml,
+            message=f"Create {item_type.value} {name}: config.yaml",
+        )
+
+        # Create README.md
+        await self._catalog_repo.save_content(
+            path=f"{base_path}/README.md",
+            content=content,
+            message=f"Create {item_type.value} {name}: README.md",
+        )
+
+        # Refresh cache to include new item
+        await self.refresh_catalog_cache()
+
+        # Return the created item
+        item_id = self._generate_catalog_id(base_path)
+        return CatalogItemDetail(
+            id=item_id,
+            type=item_type,
+            name=name,
+            description=description,
+            git_path=base_path,
+            tags=tags,
+            scope=CatalogScope.USER,
+            scope_id=user_id,
+            readme_path=f"{base_path}/README.md",
+            documentation=content,
+        )
+
+    async def update_catalog_item(
+        self,
+        user_id: UUID,
+        item_id: str,
+        description: Optional[str] = None,
+        tags: Optional[list[str]] = None,
+        content: Optional[str] = None,
+    ) -> Optional[CatalogItemDetail]:
+        """
+        Update an existing catalog item.
+
+        Only the owner can update their items.
+        """
+        # Find the item
+        all_items = await self._ensure_cache()
+        item = next((i for i in all_items if i.id == item_id), None)
+
+        if item is None:
+            return None
+
+        # Check ownership
+        if item.scope != CatalogScope.USER or item.scope_id != user_id:
+            return None
+
+        # Update config.yaml if description or tags changed
+        if description is not None or tags is not None:
+            new_desc = description if description is not None else item.description
+            new_tags = tags if tags is not None else item.tags
+            config_yaml = f"name: {item.name}\ndescription: {new_desc}\ntags: [{', '.join(new_tags)}]\n"
+            await self._catalog_repo.save_content(
+                path=f"{item.git_path}/config.yaml",
+                content=config_yaml,
+                message=f"Update {item.type.value} {item.name}: config.yaml",
+            )
+
+        # Update README.md if content changed
+        if content is not None:
+            await self._catalog_repo.save_content(
+                path=f"{item.git_path}/README.md",
+                content=content,
+                message=f"Update {item.type.value} {item.name}: README.md",
+            )
+
+        # Refresh cache
+        await self.refresh_catalog_cache()
+
+        # Return updated item
+        return CatalogItemDetail(
+            id=item.id,
+            type=item.type,
+            name=item.name,
+            description=description if description is not None else item.description,
+            git_path=item.git_path,
+            tags=tags if tags is not None else item.tags,
+            scope=item.scope,
+            scope_id=item.scope_id,
+            readme_path=item.readme_path,
+            documentation=content if content is not None else (
+                await self._catalog_repo.get_content(item.readme_path) or ""
+            ),
+        )
+
+    async def delete_catalog_item(
+        self,
+        user_id: UUID,
+        item_id: str,
+    ) -> bool:
+        """
+        Delete a catalog item.
+
+        Only the owner can delete their items.
+        Returns True if deleted, False if not found or not authorized.
+        """
+        # Find the item
+        all_items = await self._ensure_cache()
+        item = next((i for i in all_items if i.id == item_id), None)
+
+        if item is None:
+            return False
+
+        # Check ownership
+        if item.scope != CatalogScope.USER or item.scope_id != user_id:
+            return False
+
+        # Delete files
+        try:
+            await self._catalog_repo.delete_content(
+                path=f"{item.git_path}/README.md",
+                message=f"Delete {item.type.value} {item.name}: README.md",
+            )
+        except Exception:
+            pass
+
+        try:
+            await self._catalog_repo.delete_content(
+                path=f"{item.git_path}/config.yaml",
+                message=f"Delete {item.type.value} {item.name}: config.yaml",
+            )
+        except Exception:
+            pass
+
+        # Refresh cache
+        await self.refresh_catalog_cache()
+
+        return True
+
+    # -------------------------------------------------------------------------
     # Configuration: User/Team/Org config CRUD with git versioning
     # -------------------------------------------------------------------------
 

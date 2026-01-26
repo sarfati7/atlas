@@ -36,11 +36,15 @@ def main_callback(
 # Register command groups
 from atlas_cli.commands import auth
 from atlas_cli.commands.doctor import doctor
+from atlas_cli.commands.pull import pull
+from atlas_cli.commands.push import push
 from atlas_cli.commands.status import status
 from atlas_cli.commands.sync import sync
 
 app.add_typer(auth.app, name="auth")
 app.command()(sync)
+app.command()(push)
+app.command()(pull)
 app.command()(doctor)
 app.command()(status)
 
