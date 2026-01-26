@@ -6,6 +6,7 @@ from typing import Optional
 
 from github import Github, GithubException
 
+from atlas.adapters.catalog.exceptions import CatalogPermissionError
 from atlas.adapters.catalog.interface import AbstractCatalogRepository
 from atlas.domain.entities import ConfigurationVersion
 
@@ -48,13 +49,21 @@ class GitHubCatalogRepository(AbstractCatalogRepository):
                 content,
                 existing.sha,
             )
-        except GithubException:
-            result = await asyncio.to_thread(
-                self._repo.create_file,
-                path,
-                message,
-                content,
-            )
+        except GithubException as e:
+            if e.status == 403:
+                raise CatalogPermissionError("write")
+            # File doesn't exist, create it
+            try:
+                result = await asyncio.to_thread(
+                    self._repo.create_file,
+                    path,
+                    message,
+                    content,
+                )
+            except GithubException as create_error:
+                if create_error.status == 403:
+                    raise CatalogPermissionError("write")
+                raise
         return result["commit"].sha
 
     async def delete_content(self, path: str, message: str) -> str:

@@ -48,3 +48,15 @@ class ContentWriteError(CatalogError):
         if reason:
             message += f" - {reason}"
         super().__init__(message)
+
+
+class CatalogPermissionError(CatalogError):
+    """Raised when GitHub token lacks required permissions."""
+
+    def __init__(self, operation: str = "write") -> None:
+        self.operation = operation
+        message = (
+            f"GitHub token does not have permission to {operation}. "
+            "Please update the token in Admin → Settings with 'Contents: Read and write' permission."
+        )
+        super().__init__(message)

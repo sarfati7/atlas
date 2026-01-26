@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel
 
+from atlas.adapters.catalog.exceptions import CatalogPermissionError
 from atlas.application.services import ConfigurationNotFoundError, VersionNotFoundError
 from atlas.entrypoints.dependencies import Atlas, CurrentUser
 
@@ -73,11 +74,17 @@ async def update_my_configuration(
     Creates a new git commit with the updated content.
     Optionally accepts a custom commit message.
     """
-    config = await atlas.save_user_configuration(
-        user_id=current_user.id,
-        content=body.content,
-        message=body.message,
-    )
+    try:
+        config = await atlas.save_user_configuration(
+            user_id=current_user.id,
+            content=body.content,
+            message=body.message,
+        )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
 
     return ConfigurationResponse(
         content=body.content,
@@ -142,6 +149,11 @@ async def rollback_configuration(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Version {commit_sha} not found",
         )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
 
     content, _ = await atlas.get_user_configuration(current_user.id)
 
@@ -185,10 +197,16 @@ async def import_configuration(
             detail="File must be valid UTF-8 text",
         )
 
-    config = await atlas.import_user_configuration(
-        user_id=current_user.id,
-        content=content_str,
-    )
+    try:
+        config = await atlas.import_user_configuration(
+            user_id=current_user.id,
+            content=content_str,
+        )
+    except CatalogPermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message,
+        )
 
     return ConfigurationResponse(
         content=content_str,
