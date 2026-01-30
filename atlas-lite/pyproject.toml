@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "atlas-lite"
+version = "0.1.0"
+description = "Git-only sync for Claude configuration - no backend required"
+requires-python = ">=3.10"
+dependencies = []  # Only uses stdlib!
+
+[project.scripts]
+atlas-lite = "atlas_lite:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
