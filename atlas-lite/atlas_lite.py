@@ -4,10 +4,12 @@
 No backend required. Just syncs from a Git repo to ~/.claude/
 
 Usage:
-    atlas-lite sync                    # Sync everything
-    atlas-lite sync --dry-run          # Preview changes
-    atlas-lite status                  # Show sync status
     atlas-lite init <repo-url>         # Initialize with repo URL
+    atlas-lite sync                    # Pull skills/mcps/tools from repo
+    atlas-lite push                    # Push local items to repo
+    atlas-lite push -m "message"       # Push with commit message
+    atlas-lite status                  # Show sync status
+    atlas-lite sync --dry-run          # Preview changes
 """
 
 import argparse
@@ -188,6 +190,106 @@ def sync(dry_run: bool = False, include_config: bool = False) -> None:
         save_config(config)
 
 
+def push(dry_run: bool = False, message: str = "") -> None:
+    """Push local skills/mcps/tools to Git repo."""
+    config = load_config()
+    repo_url = config.get("repo_url")
+
+    if not repo_url:
+        print("No repository configured.")
+        print("Run: atlas-lite init <repo-url>")
+        sys.exit(1)
+
+    repo_dir = CACHE_DIR / "repo"
+
+    if not repo_dir.exists():
+        print("No local cache. Run 'atlas-lite sync' first.")
+        sys.exit(1)
+
+    # Pull latest first to avoid conflicts
+    print("Pulling latest changes...")
+    success, output = run_git(["pull", "--ff-only"], cwd=repo_dir)
+    if not success:
+        print(f"Pull failed: {output}")
+        print("Resolve conflicts manually or re-clone.")
+        sys.exit(1)
+
+    # Copy local items to repo
+    changes = []
+
+    push_dirs = [
+        ("skills", "skills"),
+        ("commands", "mcps"),  # local commands -> mcps in repo
+        ("tools", "tools"),
+    ]
+
+    for local_name, repo_name in push_dirs:
+        local_path = CLAUDE_DIR / local_name
+        repo_path = repo_dir / repo_name
+
+        if not local_path.exists():
+            continue
+
+        repo_path.mkdir(parents=True, exist_ok=True)
+
+        for item_dir in local_path.iterdir():
+            if not item_dir.is_dir():
+                continue
+
+            item_name = item_dir.name
+            dest_dir = repo_path / item_name
+
+            # Find main file
+            main_file = None
+            for candidate in ["SKILL.md", "README.md", "config.yaml"]:
+                if (item_dir / candidate).exists():
+                    main_file = item_dir / candidate
+                    break
+
+            if not main_file:
+                continue
+
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            dest_file = dest_dir / main_file.name
+
+            if file_hash(main_file) != file_hash(dest_file):
+                action = "update" if dest_file.exists() else "create"
+                changes.append((action, f"{repo_name}/{item_name}/{main_file.name}"))
+                if not dry_run:
+                    shutil.copy2(main_file, dest_file)
+
+    if not changes:
+        print("Nothing to push. Local and remote are in sync.")
+        return
+
+    print(f"\n{'Would push' if dry_run else 'Pushing'} {len(changes)} file(s):")
+    for action, path in changes:
+        symbol = "+" if action == "create" else "~"
+        print(f"  {symbol} {path}")
+
+    if dry_run:
+        print("\nDry run - no changes made")
+        return
+
+    # Commit and push
+    commit_msg = message or f"Update {len(changes)} item(s) via atlas-lite"
+
+    run_git(["add", "."], cwd=repo_dir)
+    success, output = run_git(["commit", "-m", commit_msg], cwd=repo_dir)
+    if not success:
+        print(f"Commit failed: {output}")
+        sys.exit(1)
+
+    print("\nPushing to remote...")
+    success, output = run_git(["push"], cwd=repo_dir)
+    if not success:
+        print(f"Push failed: {output}")
+        sys.exit(1)
+
+    _, commit = run_git(["rev-parse", "--short", "HEAD"], cwd=repo_dir)
+    print(f"Pushed successfully (commit: {commit.strip()})")
+
+
 def status() -> None:
     """Show sync status."""
     config = load_config()
@@ -253,6 +355,15 @@ def main() -> None:
         "--include-config", "-c", action="store_true", help="Also sync CLAUDE.md (overwrites local)"
     )
 
+    # push command
+    push_parser = subparsers.add_parser("push", help="Push local items to Git repo")
+    push_parser.add_argument(
+        "--dry-run", "-d", action="store_true", help="Preview changes without pushing"
+    )
+    push_parser.add_argument(
+        "--message", "-m", default="", help="Commit message"
+    )
+
     # status command
     subparsers.add_parser("status", help="Show sync status")
 
@@ -262,6 +373,8 @@ def main() -> None:
         init_repo(args.repo_url)
     elif args.command == "sync":
         sync(dry_run=args.dry_run, include_config=args.include_config)
+    elif args.command == "push":
+        push(dry_run=args.dry_run, message=args.message)
     elif args.command == "status":
         status()
     else:
