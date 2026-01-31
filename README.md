@@ -1,4 +1,4 @@
-# Atlas
+# Axon
 
 Agent management platform for teams using AI coding assistants like Claude Code. Discover skills, MCPs, and tools available at your company, edit your configuration through a web UI, and sync to your local Claude instance.
 
@@ -22,15 +22,15 @@ npm install
 npm run dev
 ```
 
-### Option 2: Atlas Lite (Git-only)
+### Option 2: Axon Lite (Git-only)
 
 For teams that just want to share configs via Git. No backend required.
 
 ```bash
 pip install git+https://github.com/sarfati7/atlas.git#subdirectory=atlas-lite
 
-atlas-lite init https://github.com/yourcompany/claude-catalog.git
-atlas-lite sync
+axon-lite init https://github.com/yourcompany/claude-catalog.git
+axon-lite sync
 ```
 
 See [atlas-lite/README.md](atlas-lite/README.md) for details.
@@ -57,27 +57,27 @@ See [atlas-lite/README.md](atlas-lite/README.md) for details.
 
 ## CLI Tool
 
-Sync your configuration from Atlas to `~/.claude/`:
+Sync your configuration from Axon to `~/.claude/`:
 
 ```bash
 pip install git+https://github.com/sarfati7/atlas.git#subdirectory=cli
 
-atlas auth login
-atlas sync           # Sync CLAUDE.md
-atlas push           # Upload local skills/MCPs/tools
-atlas pull           # Download from Atlas
-atlas status         # Check sync status
-atlas doctor         # Diagnostics
+axon auth login
+axon sync           # Sync CLAUDE.md
+axon push           # Upload local skills/MCPs/tools
+axon pull           # Download from Axon
+axon status         # Check sync status
+axon doctor         # Diagnostics
 ```
 
 ## Project Structure
 
 ```
-atlas/
+axon/
 ├── backend/         # FastAPI backend
 ├── frontend/        # React frontend
 ├── cli/             # Full CLI (requires backend)
-└── atlas-lite/      # Standalone Git-only sync
+└── atlas-lite/      # Standalone Git-only sync (axon-lite command)
 ```
 
 ## Features

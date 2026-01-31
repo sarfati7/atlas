@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "atlas-cli"
+name = "axon-cli"
 version = "0.1.0"
-description = "Sync Claude configuration from Atlas platform"
+description = "Sync Claude configuration from Axon platform"
 requires-python = ">=3.12"
 dependencies = [
     "typer>=0.9.0",
@@ -22,7 +22,7 @@ dev = [
 ]
 
 [project.scripts]
-atlas = "atlas_cli.main:main"
+axon = "atlas_cli.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/atlas_cli"]

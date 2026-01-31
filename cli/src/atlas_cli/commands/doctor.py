@@ -26,7 +26,7 @@ def doctor() -> None:
         table.add_row(
             "Authentication",
             "[red]FAIL[/red]",
-            "Not logged in - run 'atlas auth login'",
+            "Not logged in - run 'axon auth login'",
         )
         all_ok = False
 
@@ -50,7 +50,7 @@ def doctor() -> None:
         table.add_row(
             "Config File",
             "[yellow]MISSING[/yellow]",
-            f"{config_path} - run 'atlas sync'",
+            f"{config_path} - run 'axon sync'",
         )
 
     # Check 4: API connectivity

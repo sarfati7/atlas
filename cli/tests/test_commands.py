@@ -248,4 +248,4 @@ class TestHelpOutput:
         result = runner.invoke(app, ["--version"])
 
         assert result.exit_code == 0
-        assert "atlas-cli" in result.output
+        assert "axon-cli" in result.output

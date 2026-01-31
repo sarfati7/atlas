@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Atlas Lite: Git-only sync for Claude configuration.
+"""Axon Lite: Git-only sync for Claude configuration.
 
 No backend required. Just syncs from a Git repo to ~/.claude/
 
 Usage:
-    atlas-lite init <repo-url>         # Initialize with repo URL
-    atlas-lite sync                    # Pull skills/mcps/tools from repo
-    atlas-lite push                    # Push local items to repo
-    atlas-lite push -m "message"       # Push with commit message
-    atlas-lite status                  # Show sync status
-    atlas-lite sync --dry-run          # Preview changes
+    axon-lite init <repo-url>         # Initialize with repo URL
+    axon-lite sync                    # Pull skills/mcps/tools from repo
+    axon-lite push                    # Push local items to repo
+    axon-lite push -m "message"       # Push with commit message
+    axon-lite status                  # Show sync status
+    axon-lite sync --dry-run          # Preview changes
 """
 
 import argparse
@@ -21,20 +21,20 @@ import subprocess
 import sys
 from pathlib import Path
 
-CONFIG_FILE = Path.home() / ".atlas-lite.json"
+CONFIG_FILE = Path.home() / ".axon-lite.json"
 CLAUDE_DIR = Path.home() / ".claude"
-CACHE_DIR = Path.home() / ".cache" / "atlas-lite"
+CACHE_DIR = Path.home() / ".cache" / "axon-lite"
 
 
 def load_config() -> dict:
-    """Load configuration from ~/.atlas-lite.json"""
+    """Load configuration from ~/.axon-lite.json"""
     if CONFIG_FILE.exists():
         return json.loads(CONFIG_FILE.read_text())
     return {}
 
 
 def save_config(config: dict) -> None:
-    """Save configuration to ~/.atlas-lite.json"""
+    """Save configuration to ~/.axon-lite.json"""
     CONFIG_FILE.write_text(json.dumps(config, indent=2))
 
 
@@ -60,13 +60,13 @@ def file_hash(path: Path) -> str:
 
 
 def init_repo(repo_url: str) -> None:
-    """Initialize atlas-lite with a repository URL."""
+    """Initialize axon-lite with a repository URL."""
     config = load_config()
     config["repo_url"] = repo_url
     save_config(config)
     print(f"Configured repository: {repo_url}")
     print(f"Config saved to: {CONFIG_FILE}")
-    print("\nRun 'atlas-lite sync' to sync files.")
+    print("\nRun 'axon-lite sync' to sync files.")
 
 
 def sync(dry_run: bool = False, include_config: bool = False) -> None:
@@ -76,7 +76,7 @@ def sync(dry_run: bool = False, include_config: bool = False) -> None:
 
     if not repo_url:
         print("No repository configured.")
-        print("Run: atlas-lite init <repo-url>")
+        print("Run: axon-lite init <repo-url>")
         sys.exit(1)
 
     # Ensure cache directory exists
@@ -197,13 +197,13 @@ def push(dry_run: bool = False, message: str = "") -> None:
 
     if not repo_url:
         print("No repository configured.")
-        print("Run: atlas-lite init <repo-url>")
+        print("Run: axon-lite init <repo-url>")
         sys.exit(1)
 
     repo_dir = CACHE_DIR / "repo"
 
     if not repo_dir.exists():
-        print("No local cache. Run 'atlas-lite sync' first.")
+        print("No local cache. Run 'axon-lite sync' first.")
         sys.exit(1)
 
     # Pull latest first to avoid conflicts
@@ -272,7 +272,7 @@ def push(dry_run: bool = False, message: str = "") -> None:
         return
 
     # Commit and push
-    commit_msg = message or f"Update {len(changes)} item(s) via atlas-lite"
+    commit_msg = message or f"Update {len(changes)} item(s) via axon-lite"
 
     run_git(["add", "."], cwd=repo_dir)
     success, output = run_git(["commit", "-m", commit_msg], cwd=repo_dir)
@@ -296,7 +296,7 @@ def status() -> None:
     repo_url = config.get("repo_url")
     last_sync = config.get("last_sync")
 
-    print("Atlas Lite Status")
+    print("Axon Lite Status")
     print("-" * 40)
     print(f"Config file: {CONFIG_FILE}")
     print(f"Claude dir:  {CLAUDE_DIR}")
@@ -305,7 +305,7 @@ def status() -> None:
 
     if not repo_url:
         print("Repository: Not configured")
-        print("\nRun: atlas-lite init <repo-url>")
+        print("\nRun: axon-lite init <repo-url>")
         return
 
     print(f"Repository: {repo_url}")
@@ -319,7 +319,7 @@ def status() -> None:
         _, remote = run_git(["rev-parse", "origin/HEAD"], cwd=repo_dir)
 
         if local.strip() != remote.strip():
-            print("\nUpdates available! Run: atlas-lite sync")
+            print("\nUpdates available! Run: axon-lite sync")
 
     # Show what's in claude dir
     print(f"\nLocal files in {CLAUDE_DIR}:")
@@ -338,7 +338,7 @@ def status() -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Atlas Lite: Git-only sync for Claude configuration"
+        description="Axon Lite: Git-only sync for Claude configuration"
     )
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 

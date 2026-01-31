@@ -46,7 +46,7 @@ def pull(
     to your local ~/.claude/ directory.
     """
     if not is_authenticated():
-        error("Not logged in. Run 'atlas auth login' first.")
+        error("Not logged in. Run 'axon auth login' first.")
         raise typer.Exit(1)
 
     config_path = get_config_path()

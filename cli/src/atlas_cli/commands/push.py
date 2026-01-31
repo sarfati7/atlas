@@ -109,7 +109,7 @@ def push(
     each item to your Atlas catalog.
     """
     if not is_authenticated():
-        error("Not logged in. Run 'atlas auth login' first.")
+        error("Not logged in. Run 'axon auth login' first.")
         raise typer.Exit(1)
 
     # Determine which types to scan

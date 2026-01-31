@@ -56,7 +56,7 @@ def login(
 
         except ConnectError:
             console.error("Could not connect to Atlas server")
-            console.info("Check your network connection or ATLAS_API_URL setting")
+            console.info("Check your network connection or AXON_API_URL setting")
             raise typer.Exit(1)
         except HTTPStatusError as e:
             if e.response.status_code == 401:
@@ -90,4 +90,4 @@ def status() -> None:
         console.success("Authenticated")
     else:
         console.info("Not logged in")
-        console.info('Run "atlas auth login" to authenticate')
+        console.info('Run "axon auth login" to authenticate')

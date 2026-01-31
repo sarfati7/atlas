@@ -26,7 +26,7 @@ def status() -> None:
     # Check if authenticated for remote status
     if not is_authenticated():
         console.print("[cyan]Remote:[/cyan] [dim]Login required to check remote status[/dim]")
-        info("\nRun 'atlas auth login' to authenticate.")
+        info("\nRun 'axon auth login' to authenticate.")
         return
 
     # Fetch remote status
@@ -52,12 +52,12 @@ def status() -> None:
         if not remote_content:
             console.print("[yellow]No remote configuration. Create one in Atlas web UI.[/yellow]")
         elif not local_exists:
-            console.print("[yellow]Local config missing. Run 'atlas sync' to download.[/yellow]")
+            console.print("[yellow]Local config missing. Run 'axon sync' to download.[/yellow]")
         elif local_content == remote_content:
             console.print("[green]In sync[/green] - local matches remote")
         else:
             console.print("[yellow]Out of sync[/yellow] - local differs from remote")
-            console.print("Run 'atlas sync' to update local config")
+            console.print("Run 'axon sync' to update local config")
 
     except Exception as e:
         console.print(f"[cyan]Remote:[/cyan] [red]Error: {e}[/red]")
