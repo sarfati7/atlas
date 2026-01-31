@@ -67,7 +67,7 @@ def init_repo(repo_url: str) -> None:
     print("\nRun 'atlas-lite sync' to sync files.")
 
 
-def sync(dry_run: bool = False, skip_config: bool = False) -> None:
+def sync(dry_run: bool = False, include_config: bool = False) -> None:
     """Sync from Git repo to ~/.claude/"""
     config = load_config()
     repo_url = config.get("repo_url")
@@ -111,16 +111,14 @@ def sync(dry_run: bool = False, skip_config: bool = False) -> None:
     # Sync items
     changes = []
 
-    # Sync CLAUDE.md if exists (unless skipped)
+    # Sync CLAUDE.md only if explicitly requested
     claude_md = repo_dir / "CLAUDE.md"
-    if claude_md.exists() and not skip_config:
+    if claude_md.exists() and include_config:
         dest = CLAUDE_DIR / "CLAUDE.md"
         if file_hash(claude_md) != file_hash(dest):
             changes.append(("update" if dest.exists() else "create", "CLAUDE.md"))
             if not dry_run:
                 shutil.copy2(claude_md, dest)
-    elif skip_config and claude_md.exists():
-        print("Skipping CLAUDE.md (--skip-config)")
 
     # Sync directories (skills, commands/mcps, tools)
     sync_dirs = [
@@ -252,7 +250,7 @@ def main() -> None:
         "--dry-run", "-d", action="store_true", help="Preview changes without syncing"
     )
     sync_parser.add_argument(
-        "--skip-config", "-s", action="store_true", help="Skip CLAUDE.md, only sync skills/mcps/tools"
+        "--include-config", "-c", action="store_true", help="Also sync CLAUDE.md (overwrites local)"
     )
 
     # status command
@@ -263,7 +261,7 @@ def main() -> None:
     if args.command == "init":
         init_repo(args.repo_url)
     elif args.command == "sync":
-        sync(dry_run=args.dry_run, skip_config=args.skip_config)
+        sync(dry_run=args.dry_run, include_config=args.include_config)
     elif args.command == "status":
         status()
     else:
