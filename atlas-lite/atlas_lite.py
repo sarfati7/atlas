@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Axon Lite: Git-only sync for Claude configuration.
+"""Axent Lite: Git-only sync for Claude configuration.
 
 No backend required. Just syncs from a Git repo to ~/.claude/
 
 Usage:
-    axon-lite init <repo-url>         # Initialize with repo URL
-    axon-lite sync                    # Pull skills/mcps/tools from repo
-    axon-lite push                    # Push local items to repo
-    axon-lite push -m "message"       # Push with commit message
-    axon-lite status                  # Show sync status
-    axon-lite sync --dry-run          # Preview changes
+    axent-lite init <repo-url>         # Initialize with repo URL
+    axent-lite sync                    # Pull skills/mcps/tools from repo
+    axent-lite sync --include-config   # Also pull CLAUDE.md
+    axent-lite push                    # Push local items to repo
+    axent-lite push --include-config   # Also push CLAUDE.md
+    axent-lite push -m "message"       # Push with commit message
+    axent-lite status                  # Show sync status
+    axent-lite sync --dry-run          # Preview changes
 """
 
 import argparse
@@ -21,9 +23,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-CONFIG_FILE = Path.home() / ".axon-lite.json"
+CONFIG_FILE = Path.home() / ".axent-lite.json"
 CLAUDE_DIR = Path.home() / ".claude"
-CACHE_DIR = Path.home() / ".cache" / "axon-lite"
+CACHE_DIR = Path.home() / ".cache" / "axent-lite"
 
 
 def load_config() -> dict:
@@ -66,7 +68,7 @@ def init_repo(repo_url: str) -> None:
     save_config(config)
     print(f"Configured repository: {repo_url}")
     print(f"Config saved to: {CONFIG_FILE}")
-    print("\nRun 'axon-lite sync' to sync files.")
+    print("\nRun 'axent-lite sync' to sync files.")
 
 
 def sync(dry_run: bool = False, include_config: bool = False) -> None:
@@ -76,7 +78,7 @@ def sync(dry_run: bool = False, include_config: bool = False) -> None:
 
     if not repo_url:
         print("No repository configured.")
-        print("Run: axon-lite init <repo-url>")
+        print("Run: axent-lite init <repo-url>")
         sys.exit(1)
 
     # Ensure cache directory exists
@@ -190,20 +192,20 @@ def sync(dry_run: bool = False, include_config: bool = False) -> None:
         save_config(config)
 
 
-def push(dry_run: bool = False, message: str = "") -> None:
+def push(dry_run: bool = False, message: str = "", include_config: bool = False) -> None:
     """Push local skills/mcps/tools to Git repo."""
     config = load_config()
     repo_url = config.get("repo_url")
 
     if not repo_url:
         print("No repository configured.")
-        print("Run: axon-lite init <repo-url>")
+        print("Run: axent-lite init <repo-url>")
         sys.exit(1)
 
     repo_dir = CACHE_DIR / "repo"
 
     if not repo_dir.exists():
-        print("No local cache. Run 'axon-lite sync' first.")
+        print("No local cache. Run 'axent-lite sync' first.")
         sys.exit(1)
 
     # Pull latest first to avoid conflicts
@@ -216,6 +218,19 @@ def push(dry_run: bool = False, message: str = "") -> None:
 
     # Copy local items to repo
     changes = []
+
+    # Push CLAUDE.md if requested
+    if include_config:
+        local_claude_md = CLAUDE_DIR / "CLAUDE.md"
+        repo_claude_md = repo_dir / "CLAUDE.md"
+        if local_claude_md.exists():
+            if file_hash(local_claude_md) != file_hash(repo_claude_md):
+                action = "update" if repo_claude_md.exists() else "create"
+                changes.append((action, "CLAUDE.md"))
+                if not dry_run:
+                    shutil.copy2(local_claude_md, repo_claude_md)
+        else:
+            print("Warning: ~/.claude/CLAUDE.md not found, skipping config push")
 
     push_dirs = [
         ("skills", "skills"),
@@ -296,7 +311,7 @@ def status() -> None:
     repo_url = config.get("repo_url")
     last_sync = config.get("last_sync")
 
-    print("Axon Lite Status")
+    print("Axent Lite Status")
     print("-" * 40)
     print(f"Config file: {CONFIG_FILE}")
     print(f"Claude dir:  {CLAUDE_DIR}")
@@ -305,7 +320,7 @@ def status() -> None:
 
     if not repo_url:
         print("Repository: Not configured")
-        print("\nRun: axon-lite init <repo-url>")
+        print("\nRun: axent-lite init <repo-url>")
         return
 
     print(f"Repository: {repo_url}")
@@ -338,7 +353,7 @@ def status() -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Axon Lite: Git-only sync for Claude configuration"
+        description="Axent Lite: Git-only sync for Claude configuration"
     )
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
@@ -363,6 +378,9 @@ def main() -> None:
     push_parser.add_argument(
         "--message", "-m", default="", help="Commit message"
     )
+    push_parser.add_argument(
+        "--include-config", "-c", action="store_true", help="Also push CLAUDE.md (overwrites remote)"
+    )
 
     # status command
     subparsers.add_parser("status", help="Show sync status")
@@ -374,7 +392,7 @@ def main() -> None:
     elif args.command == "sync":
         sync(dry_run=args.dry_run, include_config=args.include_config)
     elif args.command == "push":
-        push(dry_run=args.dry_run, message=args.message)
+        push(dry_run=args.dry_run, message=args.message, include_config=args.include_config)
     elif args.command == "status":
         status()
     else:

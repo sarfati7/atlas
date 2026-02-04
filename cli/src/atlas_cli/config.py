@@ -17,10 +17,10 @@ class Config:
     def __init__(self) -> None:
         """Initialize configuration from environment."""
         self.api_base_url = os.environ.get(
-            "AXON_API_URL",
+            "AXENT_API_URL",
             "http://localhost:8000/api/v1",
         )
-        self.timeout = float(os.environ.get("AXON_TIMEOUT", "30.0"))
+        self.timeout = float(os.environ.get("AXENT_TIMEOUT", "30.0"))
 
 
 config = Config()

@@ -2,7 +2,7 @@
 
 Uses the OS keychain (macOS Keychain, Windows Credential Manager,
 Linux Secret Service) for secure storage of authentication tokens.
-Falls back to AXON_ACCESS_TOKEN environment variable for headless systems.
+Falls back to AXENT_ACCESS_TOKEN environment variable for headless systems.
 """
 
 import os
@@ -44,21 +44,21 @@ def save_tokens(access_token: str, refresh_token: str) -> None:
     except KeyringError as e:
         raise RuntimeError(
             f"Failed to store credentials in keyring: {e}\n"
-            "If you're on a headless system, consider using AXON_ACCESS_TOKEN environment variable."
+            "If you're on a headless system, consider using AXENT_ACCESS_TOKEN environment variable."
         ) from e
 
 
 def get_access_token() -> str | None:
     """Retrieve access token from keychain or environment.
 
-    Environment variable AXON_ACCESS_TOKEN takes precedence over keychain.
+    Environment variable AXENT_ACCESS_TOKEN takes precedence over keychain.
     This allows CI/headless systems to authenticate without keyring.
 
     Returns:
         The access token if present, None otherwise.
     """
     # Environment variable takes precedence (for CI/headless systems)
-    env_token = os.environ.get("AXON_ACCESS_TOKEN")
+    env_token = os.environ.get("AXENT_ACCESS_TOKEN")
     if env_token:
         return env_token
 

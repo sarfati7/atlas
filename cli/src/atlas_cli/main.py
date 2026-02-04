@@ -1,12 +1,12 @@
-"""Axon CLI entry point."""
+"""Axent CLI entry point."""
 
 import typer
 
 from atlas_cli import __version__
 
 app = typer.Typer(
-    name="axon",
-    help="Sync Claude configuration from Axon platform",
+    name="axent",
+    help="Sync Claude configuration from Axent platform",
     no_args_is_help=True,
 )
 
@@ -14,7 +14,7 @@ app = typer.Typer(
 def version_callback(value: bool) -> None:
     """Print version and exit."""
     if value:
-        typer.echo(f"axon-cli {__version__}")
+        typer.echo(f"axent-cli {__version__}")
         raise typer.Exit()
 
 
@@ -29,7 +29,7 @@ def main_callback(
         help="Show version and exit.",
     ),
 ) -> None:
-    """Sync Claude configuration from Axon platform."""
+    """Sync Claude configuration from Axent platform."""
     pass
 
 
@@ -50,7 +50,7 @@ app.command()(status)
 
 
 def main() -> None:
-    """Run the Axon CLI application."""
+    """Run the Axent CLI application."""
     app()
 
 

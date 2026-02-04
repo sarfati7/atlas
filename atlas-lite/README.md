@@ -1,10 +1,10 @@
-# Axon Lite
+# Axent Lite
 
 Git-only sync for Claude configuration. No backend required.
 
 ## What it does
 
-Syncs skills, MCPs, and tools from a Git repository directly to `~/.claude/`. Perfect for teams that want to share Claude configurations without running a full Axon backend.
+Syncs skills, MCPs, and tools from a Git repository directly to `~/.claude/`. Perfect for teams that want to share Claude configurations without running a full Axent backend.
 
 ## Installation
 
@@ -15,27 +15,27 @@ pip install git+https://github.com/sarfati7/atlas.git#subdirectory=atlas-lite
 Or just download the single file:
 
 ```bash
-curl -o axon-lite https://raw.githubusercontent.com/sarfati7/atlas/main/atlas-lite/atlas_lite.py
-chmod +x axon-lite
+curl -o axent-lite https://raw.githubusercontent.com/sarfati7/atlas/main/atlas-lite/atlas_lite.py
+chmod +x axent-lite
 ```
 
 ## Usage
 
 ```bash
 # 1. Point to your team's Git repo
-axon-lite init https://github.com/yourcompany/claude-catalog.git
+axent-lite init https://github.com/yourcompany/claude-catalog.git
 
 # 2. Sync to ~/.claude/
-axon-lite sync
+axent-lite sync
 
 # 3. Push local skills to repo
-axon-lite push
+axent-lite push
 
 # 4. Check status anytime
-axon-lite status
+axent-lite status
 
 # Preview changes without syncing
-axon-lite sync --dry-run
+axent-lite sync --dry-run
 ```
 
 ## Repository Structure
@@ -60,7 +60,7 @@ tools/
 
 ## How it works
 
-1. Clones/pulls your Git repo to `~/.cache/axon-lite/repo`
+1. Clones/pulls your Git repo to `~/.cache/axent-lite/repo`
 2. Copies files to `~/.claude/`:
    - `CLAUDE.md` → `~/.claude/CLAUDE.md` (only with `--include-config`)
    - `skills/*` → `~/.claude/skills/*`
@@ -77,7 +77,7 @@ tools/
 
 ## Configuration
 
-Config stored in `~/.axon-lite.json`:
+Config stored in `~/.axent-lite.json`:
 
 ```json
 {
@@ -86,9 +86,9 @@ Config stored in `~/.axon-lite.json`:
 }
 ```
 
-## vs Full Axon
+## vs Full Axent
 
-| Feature | Axon Lite | Full Axon |
+| Feature | Axent Lite | Full Axent |
 |---------|-----------|-----------|
 | Browse catalog UI | ✗ | ✓ |
 | Search/filter | ✗ | ✓ |
@@ -99,4 +99,4 @@ Config stored in `~/.axon-lite.json`:
 | Setup complexity | Just Git | Backend + DB |
 | Dependencies | None | PostgreSQL, etc |
 
-Axon Lite is for teams that want simplicity. Full Axon is for organizations that need visibility, governance, and a web UI.
+Axent Lite is for teams that want simplicity. Full Axent is for organizations that need visibility, governance, and a web UI.
